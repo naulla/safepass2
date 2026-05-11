@@ -1,0 +1,48 @@
+# =====================================
+# SAFEPASS SECURITY
+# =====================================
+
+Options -Indexes
+
+# =====================================
+# ENABLE REWRITE
+# =====================================
+
+RewriteEngine On
+
+# =====================================
+# BLOCK IMPORTANT FOLDERS
+# =====================================
+
+RewriteRule ^config/ - [F,L]
+
+RewriteRule ^database/ - [F,L]
+
+RewriteRule ^vendor/ - [F,L]
+
+# =====================================
+# BLOCK SENSITIVE FILES
+# =====================================
+
+<FilesMatch "(\.env|composer\.json|composer\.lock)$">
+
+    Order allow,deny
+    Deny from all
+
+</FilesMatch>
+
+# =====================================
+# SECURITY HEADERS
+# =====================================
+
+<IfModule mod_headers.c>
+
+Header set X-Frame-Options "DENY"
+
+Header set X-Content-Type-Options "nosniff"
+
+Header set Referrer-Policy "no-referrer"
+
+Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none';"
+
+</IfModule>
