@@ -4,10 +4,7 @@
 
     <title>Edit Vault</title>
 
-    <link
-        rel="stylesheet"
-        href="assets/css/style.css"
-    >
+    <link rel="stylesheet" href="assets/css/style.css?v=999">
 
 </head>
 

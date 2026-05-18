@@ -1,71 +1,95 @@
+/* =========================
+   RESET
+========================= */
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
 }
 
+/* =========================
+   BASE BODY (DARK MODE FIX)
+========================= */
 body{
     font-family:Arial, sans-serif;
-    background:#eef2ff;
-    color:#1e293b;
+    background:#0f172a;
+    color:#e2e8f0;
     margin:0;
 }
 
+/* =========================
+   CONTAINER
+========================= */
 .container{
     max-width:1100px;
     margin:auto;
     padding:40px;
 }
 
+/* =========================
+   CARD
+========================= */
 .card{
-    background:white;
+    background:#111c2e;
     padding:30px;
     border-radius:20px;
-    box-shadow:
-        0 10px 25px
-        rgba(0,0,0,0.08);
+    box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
 
+/* =========================
+   HEADING
+========================= */
 h1,h2,h3{
-    color:#0f172a;
+    color:#f1f5f9;
     margin-bottom:20px;
 }
 
+/* =========================
+   LABEL
+========================= */
 label{
     display:block;
     margin-bottom:8px;
     font-weight:600;
-    color:#475569;
+    color:#cbd5e1;
 }
 
+/* =========================
+   INPUT
+========================= */
 input,
 textarea,
 select{
     width:100%;
     padding:14px;
-    border:1px solid #dbe2e8;
+    border:1px solid #334155;
     border-radius:12px;
     margin-bottom:18px;
     font-size:14px;
     transition:0.2s;
-    background:white;
+    background:#0f172a;
+    color:white;
 }
 
 input:focus,
 textarea:focus,
 select:focus{
     outline:none;
-    border-color:#2563eb;
-    box-shadow:
-        0 0 0 4px
-        rgba(37,99,235,0.15);
+    border-color:#4f46e5;
+    box-shadow:0 0 0 4px rgba(79,70,229,0.25);
 }
 
+/* =========================
+   TEXTAREA
+========================= */
 textarea{
     resize:vertical;
     min-height:120px;
 }
 
+/* =========================
+   BUTTON BASE
+========================= */
 button{
     border:none;
     padding:12px 20px;
@@ -79,6 +103,9 @@ button:hover{
     transform:translateY(-1px);
 }
 
+/* =========================
+   BUTTONS
+========================= */
 .btn-primary{
     background:#2563eb;
     color:white;
@@ -107,12 +134,12 @@ button:hover{
 }
 
 .btn-secondary{
-    background:#e2e8f0;
-    color:#0f172a;
+    background:#1f2937;
+    color:#e2e8f0;
 }
 
 .btn-secondary:hover{
-    background:#cbd5e1;
+    background:#334155;
 }
 
 .btn-purple{
@@ -124,35 +151,39 @@ button:hover{
     background:#6d28d9;
 }
 
+/* =========================
+   TOPBAR
+========================= */
 .topbar{
-    background:white;
+    background:#111c2e;
     padding:20px;
     border-radius:20px;
     margin-bottom:25px;
-    box-shadow:
-        0 2px 10px
-        rgba(0,0,0,0.06);
+    box-shadow:0 2px 10px rgba(0,0,0,0.4);
 
     display:flex;
     justify-content:space-between;
     align-items:center;
 }
 
+/* =========================
+   ACTION GROUP
+========================= */
 .action-group{
     display:flex;
     gap:10px;
     flex-wrap:wrap;
 }
 
+/* =========================
+   VAULT CARD
+========================= */
 .vault{
-    background:white;
+    background:#111c2e;
     padding:24px;
     border-radius:18px;
     margin-bottom:20px;
-    box-shadow:
-        0 4px 15px
-        rgba(0,0,0,0.06);
-
+    box-shadow:0 4px 15px rgba(0,0,0,0.3);
     transition:0.2s;
 }
 
@@ -160,6 +191,9 @@ button:hover{
     transform:translateY(-3px);
 }
 
+/* =========================
+   TABLE
+========================= */
 .table-container{
     overflow-x:auto;
 }
@@ -167,12 +201,10 @@ button:hover{
 table{
     width:100%;
     border-collapse:collapse;
-    background:white;
+    background:#111c2e;
     border-radius:18px;
     overflow:hidden;
-    box-shadow:
-        0 4px 15px
-        rgba(0,0,0,0.06);
+    box-shadow:0 4px 15px rgba(0,0,0,0.3);
 }
 
 th{
@@ -184,30 +216,39 @@ th{
 
 td{
     padding:16px;
-    border-bottom:1px solid #eef2f7;
+    border-bottom:1px solid #1f2937;
 }
 
 tr:hover{
-    background:#f8fafc;
+    background:#0f172a;
 }
 
+/* =========================
+   PASSWORD FIELD FIX
+========================= */
 .password-field{
     display:flex;
     align-items:center;
     gap:10px;
-    background:#f8fafc;
+    background:#0f172a;
     padding:10px;
     border-radius:12px;
 }
 
+/* =========================
+   GENERATOR BOX
+========================= */
 .generator-box{
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
+    background:#0f172a;
+    border:1px solid #334155;
     padding:20px;
     border-radius:16px;
     margin-bottom:20px;
 }
 
+/* =========================
+   CHECKBOX
+========================= */
 .checkbox-group{
     margin-bottom:12px;
 }
@@ -217,6 +258,7 @@ tr:hover{
     align-items:center;
     gap:10px;
     font-weight:500;
+    color:#e2e8f0;
 }
 
 .checkbox-group input{
@@ -224,6 +266,9 @@ tr:hover{
     margin-bottom:0;
 }
 
+/* =========================
+   BADGE
+========================= */
 .badge{
     display:inline-block;
     padding:6px 12px;
@@ -233,32 +278,13 @@ tr:hover{
     color:white;
 }
 
-.badge-success{
-    background:#16a34a;
-}
+.badge-success{ background:#16a34a; }
+.badge-danger{ background:#dc2626; }
+.badge-warning{ background:#f59e0b; }
 
-.badge-danger{
-    background:#dc2626;
-}
-
-.badge-warning{
-    background:#f59e0b;
-}
-
-.center{
-    text-align:center;
-}
-
-.error{
-    color:#dc2626;
-    margin-bottom:15px;
-}
-
-.success{
-    color:#16a34a;
-    margin-bottom:15px;
-}
-
+/* =========================
+   AUTH
+========================= */
 .auth-container{
     min-height:100vh;
     display:flex;
@@ -269,12 +295,10 @@ tr:hover{
 .auth-card{
     width:100%;
     max-width:450px;
-    background:white;
+    background:#111c2e;
     padding:40px;
     border-radius:24px;
-    box-shadow:
-        0 10px 25px
-        rgba(0,0,0,0.08);
+    box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
 
 .auth-title{
@@ -283,19 +307,86 @@ tr:hover{
 }
 
 .auth-subtitle{
-    color:#64748b;
+    color:#94a3b8;
     font-size:14px;
     margin-top:-10px;
     margin-bottom:30px;
     text-align:center;
 }
 
+/* =========================
+   LINKS
+========================= */
 a{
     text-decoration:none;
-    color:#2563eb;
+    color:#60a5fa;
     font-weight:600;
 }
 
 a:hover{
     text-decoration:underline;
+}
+
+/* =========================
+   UTIL
+========================= */
+.center{
+    text-align:center;
+}
+
+.error{
+    color:#f87171;
+    margin-bottom:15px;
+}
+
+.success{
+    color:#4ade80;
+    margin-bottom:15px;
+}
+
+/* =========================
+   PASSWORD COLUMN FIX (FULL)
+========================= */
+
+.password-field{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    background:#0f172a;
+    padding:10px;
+    border-radius:12px;
+}
+
+/* input password */
+.password-field input{
+    flex:1;
+    min-width:0;
+    background:transparent;
+    border:none;
+    color:white;
+    outline:none;
+}
+
+/* container tombol */
+.password-actions{
+    display:flex;
+    gap:10px; /* INI BIAR GA MEPET */
+    flex-shrink:0;
+}
+
+/* tombol kecil */
+.small-btn{
+    padding:6px 10px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    background:#1f2937;
+    color:white;
+    font-size:12px;
+    transition:0.2s;
+}
+
+.small-btn:hover{
+    background:#334155;
 }
