@@ -172,3 +172,216 @@ table tr:hover{
     background:#7f1d1d;
 
 }
+
+/* =========================
+MODERN UI UPGRADE
+========================= */
+
+body{
+
+    background:#eef2ff;
+    color:#1e293b;
+
+}
+
+.container{
+
+    border-radius:20px;
+
+    box-shadow:
+        0 10px 25px
+        rgba(0,0,0,0.08);
+
+}
+
+h1,h2,h3{
+
+    color:#0f172a;
+
+}
+
+label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+    color:#334155;
+
+}
+
+input,
+textarea{
+
+    border:1px solid #dbe2e8;
+
+    transition:0.2s;
+
+    font-size:14px;
+
+}
+
+input:focus,
+textarea:focus{
+
+    outline:none;
+
+    border-color:#2563eb;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(37,99,235,0.15);
+
+}
+
+textarea{
+
+    resize:vertical;
+
+    min-height:120px;
+
+}
+
+button{
+
+    transition:0.2s;
+
+    font-weight:bold;
+
+}
+
+button:hover{
+
+    transform:translateY(-1px);
+
+}
+
+.vault{
+
+    border-radius:16px;
+
+    transition:0.2s;
+
+}
+
+.vault:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 10px 20px
+        rgba(0,0,0,0.08);
+
+}
+
+.topbar{
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:16px;
+
+    box-shadow:
+        0 2px 10px
+        rgba(0,0,0,0.06);
+
+}
+
+.password-field{
+
+    background:#f8fafc;
+
+    padding:10px;
+
+    border-radius:10px;
+
+}
+
+.small-btn{
+
+    border-radius:8px;
+
+}
+
+.action-group{
+
+    flex-wrap:wrap;
+
+}
+
+.generator-box{
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    padding:20px;
+
+    border-radius:16px;
+
+    margin-bottom:20px;
+
+}
+
+.checkbox-group{
+
+    margin-bottom:10px;
+
+}
+
+.checkbox-group label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-weight:500;
+
+}
+
+.checkbox-group input{
+
+    width:auto;
+
+    margin-bottom:0;
+
+}
+
+.generated-password{
+
+    background:#eff6ff;
+
+    border:1px solid #bfdbfe;
+
+    font-weight:bold;
+
+}
+
+.copy-btn{
+
+    background:#16a34a;
+
+}
+
+.copy-btn:hover{
+
+    background:#15803d;
+
+}
+
+.generate-btn{
+
+    background:#7c3aed;
+
+}
+
+.generate-btn:hover{
+
+    background:#6d28d9;
+
+}

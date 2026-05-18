@@ -1,38 +1,78 @@
 async function loadSingleVault(){
 
-    const response = await fetch(
-        "api/get_single_vault.php?id=" + vaultId
-    );
+    try{
 
-    const vault = await response.json();
-
-    const encrypted = {
-
-    data:vault.encrypted_data,
-
-    salt:vault.salt,
-
-    iv:vault.iv
-
-};
-
-    const decrypted =
-        await decryptData(
-            encrypted,
-            sessionStorage.getItem("masterKey")
+        const response = await fetch(
+            "api/get_single_vault.php?id=" + vaultId
         );
 
-    document.getElementById("service").value =
-        decrypted.service;
+        const result = await response.json();
 
-    document.getElementById("username").value =
-        decrypted.username;
+        console.log("RESULT:", result);
 
-    document.getElementById("password").value =
-        decrypted.password;
+        if(result.status !== "success"){
 
-    document.getElementById("note").value =
-        decrypted.note;
+            alert(result.message);
+            return;
+
+        }
+
+        const vault = result.data;
+
+        console.log("VAULT:", vault);
+
+        const encrypted = {
+
+            data: vault.encrypted_data,
+            iv: vault.iv
+
+        };
+
+        console.log("ENCRYPTED:", encrypted);
+
+        // CEK SEBELUM DECRYPT
+
+        if(
+            !encrypted.data ||
+            !encrypted.iv
+        ){
+
+            console.log(
+                "DATA ATAU IV KOSONG"
+            );
+
+            return;
+
+        }
+
+        const decrypted =
+            await decryptData(encrypted);
+
+        console.log(
+            "DECRYPTED:",
+            decrypted
+        );
+
+        document.getElementById("service").value =
+            decrypted.service || "";
+
+        document.getElementById("username").value =
+            decrypted.username || "";
+
+        document.getElementById("password").value =
+            decrypted.password || "";
+
+        document.getElementById("note").value =
+            decrypted.note || "";
+
+    }catch(error){
+
+        console.log(
+            "LOAD ERROR:",
+            error
+        );
+
+    }
 
 }
 
@@ -79,9 +119,17 @@ async function updateVault(){
     .then(res=>res.json())
     .then(data=>{
 
-        alert("Vault berhasil diupdate");
+        if(data.status === "success"){
 
-        window.location = "dashboard.php";
+            alert("Vault berhasil diupdate");
+
+            window.location = "dashboard.php";
+
+        }else{
+
+            alert(data.message);
+
+        }
 
     });
 

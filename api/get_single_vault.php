@@ -61,13 +61,11 @@ $stmt =
         $conn,
 
         "SELECT
-
             id,
             user_id,
             encrypted_data,
             iv
-
-         FROM vaults
+        FROM vaults
 
          WHERE id=?
 
