@@ -4,43 +4,69 @@
 
     <title>Register</title>
 
-    <link rel="stylesheet"
-    href="assets/css/style.css">
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css"
+    >
 
 </head>
+
 <body>
 
-<div class="container">
+<div class="auth-container">
 
-    <h2>Register SafePass</h2>
+    <div class="auth-card">
 
-    <form id="registerForm">
+        <h1 class="auth-title">
+            Create Account
+        </h1>
 
-        <input type="email"
-               id="email"
-               placeholder="Email"
-               required>
+        <p class="auth-subtitle">
+            Buat akun vault baru
+        </p>
 
-        <input type="password"
-               id="password"
-               placeholder="Master Password"
-               required>
+        <form id="registerForm">
 
-        <button id="registerBtn">
-    Register
-</button>
+            <label>Email</label>
 
-    </form>
+            <input
+                type="email"
+                id="email"
+                placeholder="Masukkan email"
+                required
+            >
 
-    <br>
+            <label>Master Password</label>
 
-    <a href="login.php">
-        Sudah punya akun?
-    </a>
+            <input
+                type="password"
+                id="password"
+                placeholder="Masukkan master password"
+                required
+            >
+
+            <button
+                class="btn-primary"
+                id="registerBtn"
+            >
+                Register
+            </button>
+
+        </form>
+
+        <br>
+
+        <div class="center">
+
+            <a href="login.php">
+                Sudah punya akun?
+            </a>
+
+        </div>
+
+    </div>
 
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/argon2-browser/dist/argon2-bundled.min.js"></script>
 
 <script src="assets/js/crypto.js"></script>
 <script src="assets/js/auth.js"></script>

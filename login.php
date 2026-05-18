@@ -4,42 +4,69 @@
 
     <title>Login</title>
 
-    <link rel="stylesheet"
-    href="assets/css/style.css">
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css"
+    >
 
 </head>
+
 <body>
 
-<div class="container">
+<div class="auth-container">
 
-    <h2>Login SafePass</h2>
+    <div class="auth-card">
 
-    <form id="loginForm">
+        <h1 class="auth-title">
+            Secure Vault
+        </h1>
 
-        <input type="email"
-               id="email"
-               placeholder="Email"
-               required>
+        <p class="auth-subtitle">
+            Simpan password dengan aman
+        </p>
 
-        <input type="password"
-               id="password"
-               placeholder="Master Password"
-               required>
+        <form id="loginForm">
 
-        <button id="loginBtn">
-    Login
-</button>
+            <label>Email</label>
 
-    </form>
+            <input
+                type="email"
+                id="email"
+                placeholder="Masukkan email"
+                required
+            >
 
-    <br>
+            <label>Master Password</label>
 
-    <a href="register.php">
-        Belum punya akun?
-    </a>
+            <input
+                type="password"
+                id="password"
+                placeholder="Masukkan master password"
+                required
+            >
+
+            <button
+                class="btn-primary"
+                id="loginBtn"
+            >
+                Login
+            </button>
+
+        </form>
+
+        <br>
+
+        <div class="center">
+
+            <a href="register.php">
+                Belum punya akun?
+            </a>
+
+        </div>
+
+    </div>
 
 </div>
-
 
 <script src="assets/js/crypto.js"></script>
 <script src="assets/js/login.js"></script>
