@@ -6,7 +6,7 @@ $conn = mysqli_connect(
     "",
     "safepass2"
 );
-
+/** @var mysqli $conn */
 if(!$conn){
     die("Koneksi database gagal");
 }

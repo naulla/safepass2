@@ -5,7 +5,7 @@ session_start();
 header("Content-Type: application/json");
 
 include "../config/database.php";
-
+/** @var mysqli $conn */
 // =========================
 // CEK LOGIN
 // =========================

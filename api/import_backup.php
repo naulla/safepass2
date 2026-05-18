@@ -1,17 +1,56 @@
 <?php
 
-header("Content-Type: application/json");
+session_start();
 
-include "../config/database.php";
+header(
+    "Content-Type: application/json"
+);
+
+require "../config/database.php";
 /** @var mysqli $conn */
+
 // =========================
-// AMBIL JSON INPUT
+// CEK LOGIN
+// =========================
+
+if(
+
+    !isset($_SESSION['user_id'])
+
+){
+
+    echo json_encode([
+
+        "status" => "error",
+
+        "message" =>
+            "Unauthorized"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// USER SESSION
+// =========================
+
+$user_id =
+    (int)$_SESSION['user_id'];
+
+// =========================
+// AMBIL JSON
 // =========================
 
 $raw =
     file_get_contents(
         "php://input"
     );
+
+// =========================
+// VALIDASI REQUEST
+// =========================
 
 if(!$raw){
 
@@ -34,9 +73,16 @@ if(!$raw){
 
 $data =
     json_decode(
+
         $raw,
+
         true
+
     );
+
+// =========================
+// VALIDASI JSON
+// =========================
 
 if(!$data){
 
@@ -54,89 +100,19 @@ if(!$data){
 }
 
 // =========================
-// VALIDASI ID
+// VALIDASI FIELD
 // =========================
-
-if(!isset($data['id'])){
-
-    echo json_encode([
-
-        "status" => "error",
-
-        "message" =>
-            "ID tidak ditemukan"
-
-    ]);
-
-    exit;
-
-}
-
-// =========================
-// AMBIL ID
-// =========================
-
-$id =
-    intval(
-        $data['id']
-    );
-
-// =========================
-// VALIDASI EMPTY
-// =========================
-
-if($id <= 0){
-
-    echo json_encode([
-
-        "status" => "error",
-
-        "message" =>
-            "ID invalid"
-
-    ]);
-
-    exit;
-
-}
-
-// =========================
-// CEK VAULT ADA
-// =========================
-
-$check =
-    mysqli_prepare(
-
-        $conn,
-
-        "SELECT id
-         FROM vaults
-         WHERE id=?"
-
-    );
-
-mysqli_stmt_bind_param(
-
-    $check,
-
-    "i",
-
-    $id
-
-);
-
-mysqli_stmt_execute(
-    $check
-);
-
-$result =
-    mysqli_stmt_get_result(
-        $check
-    );
 
 if(
-    mysqli_num_rows($result)
-    <= 0
+
+    !isset(
+        $data["encrypted_data"]
+    ) ||
+
+    !isset(
+        $data["iv"]
+    )
+
 ){
 
     echo json_encode([
@@ -144,7 +120,7 @@ if(
         "status" => "error",
 
         "message" =>
-            "Vault tidak ditemukan"
+            "Field tidak lengkap"
 
     ]);
 
@@ -153,18 +129,111 @@ if(
 }
 
 // =========================
-// PREPARED STATEMENT
+// DATA
+// =========================
+
+$encrypted_data =
+    trim(
+
+        $data[
+            "encrypted_data"
+        ]
+
+    );
+
+$iv =
+    trim(
+
+        $data["iv"]
+
+    );
+
+// =========================
+// VALIDASI EMPTY
+// =========================
+
+if(
+
+    empty($encrypted_data) ||
+
+    empty($iv)
+
+){
+
+    echo json_encode([
+
+        "status" => "error",
+
+        "message" =>
+            "Data kosong"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// VALIDASI BASE64
+// =========================
+
+if(
+
+    base64_decode(
+        $encrypted_data,
+        true
+    ) === false ||
+
+    base64_decode(
+        $iv,
+        true
+    ) === false
+
+){
+
+    echo json_encode([
+
+        "status" => "error",
+
+        "message" =>
+            "Format base64 invalid"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// PREPARE
 // =========================
 
 $stmt =
-    mysqli_prepare(
+    $conn->prepare(
 
-        $conn,
+        "INSERT INTO vaults
 
-        "DELETE FROM vaults
-         WHERE id=?"
+        (
+
+            user_id,
+            encrypted_data,
+            iv
+
+        )
+
+        VALUES
+
+        (
+
+            ?, ?, ?
+
+        )"
 
     );
+
+// =========================
+// VALIDASI PREPARE
+// =========================
 
 if(!$stmt){
 
@@ -173,7 +242,7 @@ if(!$stmt){
         "status" => "error",
 
         "message" =>
-            "Prepare statement gagal"
+            "Prepare gagal"
 
     ]);
 
@@ -185,13 +254,13 @@ if(!$stmt){
 // BIND PARAM
 // =========================
 
-mysqli_stmt_bind_param(
+$stmt->bind_param(
 
-    $stmt,
+    "iss",
 
-    "i",
-
-    $id
+    $user_id,
+    $encrypted_data,
+    $iv
 
 );
 
@@ -199,7 +268,7 @@ mysqli_stmt_bind_param(
 // EXECUTE
 // =========================
 
-if(mysqli_stmt_execute($stmt)){
+if($stmt->execute()){
 
     echo json_encode([
 
@@ -214,7 +283,7 @@ if(mysqli_stmt_execute($stmt)){
         "status" => "error",
 
         "message" =>
-            mysqli_error($conn)
+            "Insert gagal"
 
     ]);
 
@@ -224,6 +293,8 @@ if(mysqli_stmt_execute($stmt)){
 // CLOSE
 // =========================
 
-mysqli_stmt_close($stmt);
+$stmt->close();
+
+$conn->close();
 
 ?>

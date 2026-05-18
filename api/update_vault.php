@@ -3,7 +3,7 @@
 header("Content-Type: application/json");
 
 include "../config/database.php";
-
+/** @var mysqli $conn */
 // =========================
 // AMBIL JSON INPUT
 // =========================

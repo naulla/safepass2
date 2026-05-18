@@ -44,9 +44,7 @@ document.getElementById("registerForm")
             document.getElementById(
                 "password"
             )
-            .value
-            .trim();
-
+            .value;
         // =========================
         // VALIDASI
         // =========================

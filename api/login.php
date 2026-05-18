@@ -1,9 +1,9 @@
 <?php
-
+session_start();
 header("Content-Type: application/json");
 
 include "../config/database.php";
-
+/** @var mysqli $conn */
 // =========================
 // AMBIL JSON
 // =========================
@@ -171,7 +171,12 @@ $user =
     mysqli_fetch_assoc(
         $result
     );
+// =========================
+// SET SESSION
+// =========================
 
+$_SESSION['user_id'] =
+    (int)$user['id'];
 // =========================
 // CLOSE STATEMENT
 // =========================

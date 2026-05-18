@@ -4,15 +4,11 @@
 
 const PBKDF2_ITERATIONS =
     310000;
-
-
 // =========================
 // CACHE AES KEY
 // =========================
 
 let cachedKey = null;
-
-
 // =========================
 // WEBCRYPTO CHECK
 // =========================
@@ -28,8 +24,6 @@ function checkCryptoSupport(){
     }
 
 }
-
-
 // =========================
 // GENERATE SALT
 // =========================

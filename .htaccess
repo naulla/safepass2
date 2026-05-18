@@ -43,6 +43,6 @@ Header set X-Content-Type-Options "nosniff"
 
 Header set Referrer-Policy "no-referrer"
 
-Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none';"
+Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.pwnedpasswords.com; object-src 'none';"
 
 </IfModule>
