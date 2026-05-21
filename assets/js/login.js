@@ -13,7 +13,7 @@ document.getElementById("loginForm")
         );
 
     // =========================
-    // CEGAH DOUBLE CLICK
+    // CEGAH SPAM KLIK
     // =========================
 
     if(btn.disabled){
@@ -34,7 +34,7 @@ document.getElementById("loginForm")
 
         const email =
             document.getElementById(
-                "email"
+                "loginEmail"
             )
             .value
             .trim()
@@ -42,7 +42,7 @@ document.getElementById("loginForm")
 
         const password =
             document.getElementById(
-                "password"
+                "loginPassword"
             )
             .value;
 
@@ -61,44 +61,13 @@ document.getElementById("loginForm")
         }
 
         // =========================
-        // VALIDASI EMAIL
-        // =========================
-
-        const emailRegex =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if(!emailRegex.test(email)){
-
-            alert(
-                "Format email tidak valid"
-            );
-
-            return;
-
-        }
-
-        // =========================
-        // FETCH TIMEOUT
-        // =========================
-
-        const controller =
-            new AbortController();
-
-        const timeout =
-            setTimeout(() => {
-
-                controller.abort();
-
-            },10000);
-
-        // =========================
-        // FETCH USER
+        // AMBIL LOGIN DATA
         // =========================
 
         const response =
             await fetch(
 
-                "api/login.php",
+                "api/get_login_data.php",
 
                 {
 
@@ -113,16 +82,11 @@ document.getElementById("loginForm")
 
                         email:email
 
-                    }),
-
-                    signal:
-                        controller.signal
+                    })
 
                 }
 
             );
-
-        clearTimeout(timeout);
 
         // =========================
         // SERVER ERROR
@@ -136,27 +100,11 @@ document.getElementById("loginForm")
 
         }
 
-        // =========================
-        // VALIDASI JSON
-        // =========================
-
-        let result = null;
-
-        try{
-
-            result =
-                await response.json();
-
-        }catch{
-
-            throw new Error(
-                "JSON invalid"
-            );
-
-        }
+        const result =
+            await response.json();
 
         // =========================
-        // STATUS ERROR
+        // USER TIDAK ADA
         // =========================
 
         if(
@@ -180,26 +128,7 @@ document.getElementById("loginForm")
             result.data;
 
         // =========================
-        // VALIDASI USER
-        // =========================
-
-        if(
-            !user ||
-            !user.id ||
-            !user.salt ||
-            !user.verifier
-        ){
-
-            alert(
-                "Email atau password salah"
-            );
-
-            return;
-
-        }
-
-        // =========================
-        // DECODE SALT
+        // SALT
         // =========================
 
         const salt =
@@ -223,10 +152,58 @@ document.getElementById("loginForm")
             );
 
         // =========================
+        // VERIFY LOGIN
+        // =========================
+
+        const verifyResponse =
+            await fetch(
+
+                "api/verify_login.php",
+
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        email:email,
+
+                        verifier:verifier
+
+                    })
+
+                }
+
+            );
+
+        // =========================
+        // VERIFY ERROR
+        // =========================
+
+        if(!verifyResponse.ok){
+
+            throw new Error(
+                "Verify server error"
+            );
+
+        }
+
+        const verifyResult =
+            await verifyResponse.json();
+
+        // =========================
         // PASSWORD SALAH
         // =========================
 
-        if(verifier !== user.verifier){
+        if(
+            verifyResult.status !==
+            "success"
+        ){
 
             alert(
                 "Email atau password salah"
@@ -255,7 +232,15 @@ document.getElementById("loginForm")
         // SAVE AES KEY
         // =========================
 
-        await saveAESKey(key);
+        setAESKey(key);
+
+        // =========================
+        // CLEAR PASSWORD
+        // =========================
+
+        document.getElementById(
+            "loginPassword"
+        ).value = "";
 
         // =========================
         // SESSION
@@ -271,22 +256,6 @@ document.getElementById("loginForm")
 
         sessionStorage.setItem(
 
-            "salt",
-
-            user.salt
-
-        );
-
-        sessionStorage.setItem(
-
-            "iterations",
-
-            String(user.iterations)
-
-        );
-
-        sessionStorage.setItem(
-
             "isLoggedIn",
 
             "true"
@@ -294,12 +263,25 @@ document.getElementById("loginForm")
         );
 
         // =========================
-        // REDIRECT
+        // SHOW DASHBOARD SPA
         // =========================
 
-        window.location.replace(
-            "dashboard.php"
+        showPage(
+            "dashboardPage"
         );
+
+        // =========================
+        // LOAD VAULT
+        // =========================
+
+        if(
+            typeof loadVault ===
+            "function"
+        ){
+
+            loadVault();
+
+        }
 
     }catch(error){
 
@@ -308,32 +290,11 @@ document.getElementById("loginForm")
             error
         );
 
-        // =========================
-        // NETWORK TIMEOUT
-        // =========================
-
-        if(
-            error.name ===
-            "AbortError"
-        ){
-
-            alert(
-                "Request timeout"
-            );
-
-        }else{
-
-            alert(
-                "Terjadi error saat login"
-            );
-
-        }
+        alert(
+            "Terjadi error saat login"
+        );
 
     }finally{
-
-        // =========================
-        // ENABLE BUTTON
-        // =========================
 
         btn.disabled = false;
 

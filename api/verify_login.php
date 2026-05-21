@@ -2,9 +2,7 @@
 
 include "../config/session.php";
 
-header(
-    "Content-Type: application/json"
-);
+header("Content-Type: application/json");
 
 header(
     "Cache-Control: no-store, no-cache, must-revalidate, max-age=0"
@@ -14,35 +12,13 @@ header(
     "Pragma: no-cache"
 );
 
-require "../config/database.php";
+// =========================
+// DATABASE
+// =========================
+
+include "../config/database.php";
+
 /** @var mysqli $conn */
-
-// =========================
-// CEK LOGIN
-// =========================
-
-if(
-
-    !isset($_SESSION['user_id'])
-
-){
-
-    echo json_encode([
-
-        "status" => "unauthorized"
-
-    ]);
-
-    exit;
-
-}
-
-// =========================
-// USER SESSION
-// =========================
-
-$user_id =
-    (int)$_SESSION['user_id'];
 
 // =========================
 // AMBIL JSON
@@ -75,11 +51,8 @@ if(!$raw){
 
 $data =
     json_decode(
-
         $raw,
-
         true
-
     );
 
 // =========================
@@ -104,13 +77,63 @@ if(
 }
 
 // =========================
-// VALIDASI FIELD
+// INPUT
+// =========================
+
+$email =
+    strtolower(
+
+        trim(
+
+            $data['email']
+            ?? ""
+
+        )
+
+    );
+
+$clientVerifier =
+    trim(
+
+        $data['verifier']
+        ?? ""
+
+    );
+
+// =========================
+// VALIDASI INPUT
 // =========================
 
 if(
 
-    !isset(
-        $data["encrypted_data"]
+    empty($email) ||
+
+    empty($clientVerifier)
+
+){
+
+    echo json_encode([
+
+        "status" => "error"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// VALIDASI EMAIL
+// =========================
+
+if(
+
+    !filter_var(
+
+        $email,
+
+        FILTER_VALIDATE_EMAIL
+
     )
 
 ){
@@ -126,123 +149,7 @@ if(
 }
 
 // =========================
-// ENCRYPTED OBJECT
-// =========================
-
-$encrypted =
-    $data["encrypted_data"];
-
-// =========================
-// VALIDASI OBJECT
-// =========================
-
-if(
-
-    !is_array($encrypted) ||
-
-    !isset($encrypted["data"]) ||
-
-    !isset($encrypted["iv"])
-
-){
-
-    echo json_encode([
-
-        "status" => "error"
-
-    ]);
-
-    exit;
-
-}
-
-// =========================
-// DATA
-// =========================
-
-$encrypted_data =
-    trim(
-        $encrypted["data"]
-    );
-
-$iv =
-    trim(
-        $encrypted["iv"]
-    );
-
-// =========================
-// VALIDASI EMPTY
-// =========================
-
-if(
-
-    empty($encrypted_data) ||
-
-    empty($iv)
-
-){
-
-    echo json_encode([
-
-        "status" => "error"
-
-    ]);
-
-    exit;
-
-}
-
-// =========================
-// VALIDASI BASE64
-// =========================
-
-if(
-
-    base64_decode(
-        $encrypted_data,
-        true
-    ) === false ||
-
-    base64_decode(
-        $iv,
-        true
-    ) === false
-
-){
-
-    echo json_encode([
-
-        "status" => "error"
-
-    ]);
-
-    exit;
-
-}
-
-// =========================
-// LIMIT SIZE
-// =========================
-
-if(
-
-    strlen($encrypted_data)
-    > 50000
-
-){
-
-    echo json_encode([
-
-        "status" => "error"
-
-    ]);
-
-    exit;
-
-}
-
-// =========================
-// PREPARE
+// PREPARED STATEMENT
 // =========================
 
 $stmt =
@@ -250,23 +157,16 @@ $stmt =
 
         $conn,
 
-        "INSERT INTO vaults
+        "SELECT
 
-        (
+            id,
+            verifier
 
-            user_id,
-            encrypted_data,
-            iv
+         FROM users
 
-        )
+         WHERE email = ?
 
-        VALUES
-
-        (
-
-            ?, ?, ?
-
-        )"
+         LIMIT 1"
 
     );
 
@@ -294,11 +194,9 @@ mysqli_stmt_bind_param(
 
     $stmt,
 
-    "iss",
+    "s",
 
-    $user_id,
-    $encrypted_data,
-    $iv
+    $email
 
 );
 
@@ -308,17 +206,9 @@ mysqli_stmt_bind_param(
 
 if(
 
-    mysqli_stmt_execute($stmt)
+    !mysqli_stmt_execute($stmt)
 
 ){
-
-    echo json_encode([
-
-        "status" => "success"
-
-    ]);
-
-}else{
 
     echo json_encode([
 
@@ -326,14 +216,108 @@ if(
 
     ]);
 
+    exit;
+
 }
 
 // =========================
-// CLOSE
+// RESULT
+// =========================
+
+$result =
+    mysqli_stmt_get_result(
+        $stmt
+    );
+
+// =========================
+// USER TIDAK ADA
+// =========================
+
+if(
+
+    mysqli_num_rows($result)
+    === 0
+
+){
+
+    echo json_encode([
+
+        "status" => "error"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// USER DATA
+// =========================
+
+$user =
+    mysqli_fetch_assoc(
+        $result
+    );
+
+// =========================
+// CLOSE STATEMENT
 // =========================
 
 mysqli_stmt_close($stmt);
 
-mysqli_close($conn);
+// =========================
+// VERIFIER CHECK
+// =========================
+
+if(
+
+    !hash_equals(
+
+        $user['verifier'],
+
+        $clientVerifier
+
+    )
+
+){
+
+    echo json_encode([
+
+        "status" => "error"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// REGENERATE SESSION
+// =========================
+
+session_regenerate_id(true);
+
+// =========================
+// SET SESSION
+// =========================
+
+$_SESSION['user_id'] =
+    (int)$user['id'];
+
+$_SESSION['logged_in'] =
+    true;
+
+$_SESSION['last_activity'] =
+    time();
+
+// =========================
+// SUCCESS
+// =========================
+
+echo json_encode([
+
+    "status" => "success"
+
+]);
 
 ?>

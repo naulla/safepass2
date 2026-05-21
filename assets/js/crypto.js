@@ -4,13 +4,23 @@
 
 const PBKDF2_ITERATIONS =
     310000;
+
 // =========================
-// CACHE AES KEY
+// AES KEY CACHE (RAM ONLY)
 // =========================
 
 let cachedKey = null;
 // =========================
-// WEBCRYPTO CHECK
+// CACHE AES KEY
+// =========================
+
+function setAESKey(key){
+
+    cachedKey = key;
+
+}
+// =========================
+// CHECK WEBCRYPTO
 // =========================
 
 function checkCryptoSupport(){
@@ -24,8 +34,9 @@ function checkCryptoSupport(){
     }
 
 }
+
 // =========================
-// GENERATE SALT
+// GENERATE RANDOM SALT
 // =========================
 
 function generateSalt(){
@@ -37,7 +48,6 @@ function generateSalt(){
     );
 
 }
-
 
 // =========================
 // BASE64 HELPER
@@ -77,14 +87,23 @@ function base64ToBuf(base64){
 
 }
 
-
 // =========================
-// PBKDF2 KEY MATERIAL
+// IMPORT PASSWORD KEY
 // =========================
 
 async function importPasswordKey(
     password
 ){
+
+    checkCryptoSupport();
+
+    if(!password){
+
+        throw new Error(
+            "Password kosong"
+        );
+
+    }
 
     return await crypto.subtle.importKey(
 
@@ -104,7 +123,6 @@ async function importPasswordKey(
     );
 
 }
-
 
 // =========================
 // GENERATE VERIFIER
@@ -128,14 +146,10 @@ async function generateVerifier(
 
     }
 
-    // import password
-
     const keyMaterial =
         await importPasswordKey(
             password
         );
-
-    // derive bits
 
     const bits =
         await crypto.subtle.deriveBits(
@@ -162,7 +176,6 @@ async function generateVerifier(
     return bufToBase64(bits);
 
 }
-
 
 // =========================
 // DERIVE AES KEY
@@ -194,7 +207,9 @@ async function deriveKey(
 
     }
 
-    // cache RAM
+    // =========================
+    // CACHE RAM
+    // =========================
 
     if(cachedKey){
 
@@ -202,14 +217,14 @@ async function deriveKey(
 
     }
 
-    // import password
-
     const keyMaterial =
         await importPasswordKey(
             password
         );
 
-    // derive AES key
+    // =========================
+    // DERIVE AES-256 KEY
+    // =========================
 
     cachedKey =
         await crypto.subtle.deriveKey(
@@ -237,7 +252,7 @@ async function deriveKey(
 
             },
 
-            true,
+            false,
 
             ["encrypt","decrypt"]
 
@@ -247,9 +262,9 @@ async function deriveKey(
 
 }
 
-
 // =========================
 // SAVE AES KEY
+// RAM ONLY
 // =========================
 
 async function saveAESKey(key){
@@ -264,34 +279,13 @@ async function saveAESKey(key){
 
     }
 
-    // export raw
+    // =========================
+    // RAM ONLY CACHE
+    // =========================
 
-    const raw =
-        await crypto.subtle.exportKey(
-
-            "raw",
-
-            key
-
-        );
-
-    // base64
-
-    const base64 =
-        bufToBase64(raw);
-
-    // simpan session
-
-    sessionStorage.setItem(
-
-        "aesKey",
-
-        base64
-
-    );
+    cachedKey = key;
 
 }
-
 
 // =========================
 // GET AES KEY
@@ -301,22 +295,7 @@ async function getAESKey(){
 
     checkCryptoSupport();
 
-    // cache RAM
-
-    if(cachedKey){
-
-        return cachedKey;
-
-    }
-
-    // session storage
-
-    const stored =
-        sessionStorage.getItem(
-            "aesKey"
-        );
-
-    if(!stored){
+    if(!cachedKey){
 
         throw new Error(
             "AES Key tidak ditemukan"
@@ -324,34 +303,9 @@ async function getAESKey(){
 
     }
 
-    // base64 => byte
-
-    const raw =
-        base64ToBuf(stored);
-
-    // import AES key
-
-    cachedKey =
-        await crypto.subtle.importKey(
-
-            "raw",
-
-            raw,
-
-            {
-                name:"AES-GCM"
-            },
-
-            false,
-
-            ["encrypt","decrypt"]
-
-        );
-
     return cachedKey;
 
 }
-
 
 // =========================
 // ENCRYPT DATA
@@ -372,7 +326,9 @@ async function encryptData(data){
         const key =
             await getAESKey();
 
-        // random IV
+        // =========================
+        // RANDOM IV 12 BYTE
+        // =========================
 
         const iv =
             crypto.getRandomValues(
@@ -381,7 +337,9 @@ async function encryptData(data){
 
             );
 
-        // encode JSON
+        // =========================
+        // ENCODE JSON
+        // =========================
 
         const encoded =
             new TextEncoder()
@@ -391,7 +349,9 @@ async function encryptData(data){
 
             );
 
-        // encrypt
+        // =========================
+        // AES-GCM ENCRYPT
+        // =========================
 
         const encrypted =
             await crypto.subtle.encrypt(
@@ -410,7 +370,13 @@ async function encryptData(data){
 
             );
 
+        // =========================
+        // RETURN ENCRYPTED OBJECT
+        // =========================
+
         return {
+
+            version:1,
 
             iv:
                 bufToBase64(iv),
@@ -424,9 +390,8 @@ async function encryptData(data){
 
     }catch(error){
 
-        console.log(
-            "ENCRYPT ERROR:",
-            error
+        console.error(
+            "Encrypt failed"
         );
 
         throw error;
@@ -434,7 +399,6 @@ async function encryptData(data){
     }
 
 }
-
 
 // =========================
 // DECRYPT DATA
@@ -461,21 +425,27 @@ async function decryptData(data){
         const key =
             await getAESKey();
 
-        // decode IV
+        // =========================
+        // DECODE IV
+        // =========================
 
         const iv =
             base64ToBuf(
                 data.iv
             );
 
-        // decode encrypted
+        // =========================
+        // DECODE ENCRYPTED DATA
+        // =========================
 
         const encrypted =
             base64ToBuf(
                 data.data
             );
 
-        // decrypt
+        // =========================
+        // AES-GCM DECRYPT
+        // =========================
 
         const decrypted =
             await crypto.subtle.decrypt(
@@ -494,7 +464,9 @@ async function decryptData(data){
 
             );
 
-        // parse JSON
+        // =========================
+        // PARSE JSON
+        // =========================
 
         return JSON.parse(
 
@@ -505,9 +477,8 @@ async function decryptData(data){
 
     }catch(error){
 
-        console.log(
-            "DECRYPT ERROR:",
-            error
+        console.error(
+            "Decrypt failed"
         );
 
         throw error;
@@ -516,17 +487,12 @@ async function decryptData(data){
 
 }
 
-
 // =========================
-// CLEAR CACHE
+// CLEAR CRYPTO CACHE
 // =========================
 
 function clearCryptoCache(){
 
     cachedKey = null;
-
-    sessionStorage.removeItem(
-        "aesKey"
-    );
 
 }

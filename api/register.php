@@ -1,9 +1,85 @@
 <?php
 
-header("Content-Type: application/json");
+include "../config/session.php";
+
+header(
+    "Content-Type: application/json"
+);
+
+header(
+    "Cache-Control: no-store, no-cache, must-revalidate, max-age=0"
+);
+
+header(
+    "Pragma: no-cache"
+);
+
+// =========================
+// DATABASE
+// =========================
 
 include "../config/database.php";
+
 /** @var mysqli $conn */
+
+// =========================
+// RATE LIMIT
+// =========================
+
+if(
+
+    !isset($_SESSION['register_attempt'])
+
+){
+
+    $_SESSION['register_attempt'] = 0;
+
+}
+
+if(
+
+    !isset($_SESSION['register_time'])
+
+){
+
+    $_SESSION['register_time'] = time();
+
+}
+
+// RESET 5 MENIT
+
+if(
+
+    time() - $_SESSION['register_time']
+    > 300
+
+){
+
+    $_SESSION['register_attempt'] = 0;
+
+    $_SESSION['register_time'] = time();
+
+}
+
+// LIMIT
+
+if(
+
+    $_SESSION['register_attempt']
+    >= 5
+
+){
+
+    echo json_encode([
+
+        "status" => "error"
+
+    ]);
+
+    exit;
+
+}
+
 // =========================
 // AMBIL JSON
 // =========================
@@ -12,6 +88,26 @@ $raw =
     file_get_contents(
         "php://input"
     );
+
+// =========================
+// VALIDASI REQUEST
+// =========================
+
+if(!$raw){
+
+    echo json_encode([
+
+        "status" => "error"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// DECODE JSON
+// =========================
 
 $data =
     json_decode(
@@ -23,11 +119,16 @@ $data =
 // VALIDASI JSON
 // =========================
 
-if(!$data){
+if(
+
+    $data === null &&
+    json_last_error() !== JSON_ERROR_NONE
+
+){
 
     echo json_encode([
 
-        "status"=>"invalid_json"
+        "status" => "error"
 
     ]);
 
@@ -76,7 +177,7 @@ $iterations =
     );
 
 // =========================
-// VALIDASI
+// VALIDASI EMPTY
 // =========================
 
 if(
@@ -93,7 +194,7 @@ if(
 
     echo json_encode([
 
-        "status"=>"empty_field"
+        "status" => "error"
 
     ]);
 
@@ -119,7 +220,7 @@ if(
 
     echo json_encode([
 
-        "status"=>"invalid_email"
+        "status" => "error"
 
     ]);
 
@@ -141,7 +242,7 @@ if(
 
     echo json_encode([
 
-        "status"=>"invalid_iterations"
+        "status" => "error"
 
     ]);
 
@@ -150,7 +251,57 @@ if(
 }
 
 // =========================
-// PREPARED CHECK EMAIL
+// VALIDASI BASE64
+// =========================
+
+if(
+
+    base64_decode(
+        $verifier,
+        true
+    ) === false ||
+
+    base64_decode(
+        $salt,
+        true
+    ) === false
+
+){
+
+    echo json_encode([
+
+        "status" => "error"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// LIMIT SIZE
+// =========================
+
+if(
+
+    strlen($verifier) > 500 ||
+
+    strlen($salt) > 500
+
+){
+
+    echo json_encode([
+
+        "status" => "error"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// CHECK EMAIL
 // =========================
 
 $checkStmt =
@@ -176,7 +327,7 @@ if(!$checkStmt){
 
     echo json_encode([
 
-        "status"=>"prepare_error"
+        "status" => "error"
 
     ]);
 
@@ -185,7 +336,7 @@ if(!$checkStmt){
 }
 
 // =========================
-// BIND EMAIL
+// BIND
 // =========================
 
 mysqli_stmt_bind_param(
@@ -199,7 +350,7 @@ mysqli_stmt_bind_param(
 );
 
 // =========================
-// EXECUTE CHECK
+// EXECUTE
 // =========================
 
 mysqli_stmt_execute(
@@ -207,7 +358,7 @@ mysqli_stmt_execute(
 );
 
 // =========================
-// RESULT CHECK
+// RESULT
 // =========================
 
 $checkResult =
@@ -227,13 +378,15 @@ if(
 
 ){
 
+    $_SESSION['register_attempt']++;
+
     mysqli_stmt_close(
         $checkStmt
     );
 
     echo json_encode([
 
-        "status"=>"email_exists"
+        "status" => "error"
 
     ]);
 
@@ -246,7 +399,7 @@ mysqli_stmt_close(
 );
 
 // =========================
-// PREPARED INSERT
+// INSERT USER
 // =========================
 
 $insertStmt =
@@ -279,7 +432,7 @@ if(!$insertStmt){
 
     echo json_encode([
 
-        "status"=>"prepare_error"
+        "status" => "error"
 
     ]);
 
@@ -305,7 +458,7 @@ mysqli_stmt_bind_param(
 );
 
 // =========================
-// EXECUTE INSERT
+// EXECUTE
 // =========================
 
 if(
@@ -316,9 +469,11 @@ if(
 
 ){
 
+    $_SESSION['register_attempt'] = 0;
+
     echo json_encode([
 
-        "status"=>"success"
+        "status" => "success"
 
     ]);
 
@@ -326,7 +481,7 @@ if(
 
     echo json_encode([
 
-        "status"=>"error"
+        "status" => "error"
 
     ]);
 
@@ -339,5 +494,7 @@ if(
 mysqli_stmt_close(
     $insertStmt
 );
+
+mysqli_close($conn);
 
 ?>

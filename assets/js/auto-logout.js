@@ -1,55 +1,112 @@
-let timeout;
+// =========================
+// AUTO LOGOUT
+// =========================
+
+let timeout = null;
+
+// =========================
+// LOGOUT
+// =========================
 
 function logout(){
 
-    // hapus AES key cache
+    // hapus AES key RAM
 
     cachedKey = null;
 
-    // hapus session
+    // clear session
 
     sessionStorage.clear();
 
-    // redirect
-
-    window.location =
-        "login.php";
-
-}
-
-
-
-// reset timer
-
-function resetTimer(){
+    // stop timer
 
     clearTimeout(timeout);
 
+    // redirect
+
+    showPage(
+                "loginPage"
+            );
+
+}
+
+// =========================
+// RESET TIMER
+// =========================
+
+function resetTimer(){
+
+    // clear timer lama
+
+    clearTimeout(timeout);
+
+    // buat timer baru
+
     timeout = setTimeout(() => {
+
+        // =========================
+        // CLEAR CRYPTO
+        // =========================
+
+        cachedKey = null;
+
+        // =========================
+        // CLEAR SESSION
+        // =========================
+
+        sessionStorage.clear();
+
+        // =========================
+        // ALERT
+        // =========================
 
         alert(
             "Session expired"
         );
 
-        cachedKey = null;
+        // =========================
+        // REDIRECT
+        // =========================
 
-        sessionStorage.clear();
-
-        window.location =
-            "login.php";
+        showPage(
+                "loginPage"
+            );
 
     }, 300000); // 5 menit
 
 }
 
-// event activity
+// =========================
+// USER ACTIVITY
+// =========================
 
-window.onload = resetTimer;
+[
+    "mousemove",
+    "mousedown",
+    "keypress",
+    "touchstart",
+    "scroll",
+    "click"
+]
 
-document.onmousemove = resetTimer;
+.forEach(event => {
 
-document.onkeypress = resetTimer;
+    window.addEventListener(
 
-document.onclick = resetTimer;
+        event,
 
-document.onscroll = resetTimer;
+        resetTimer,
+
+        {
+            passive:true
+        }
+
+    );
+
+});
+
+// =========================
+// START TIMER
+// =========================
+
+resetTimer();

@@ -34,7 +34,7 @@ document.getElementById("registerForm")
 
         const email =
             document.getElementById(
-                "email"
+                "registerEmail"
             )
             .value
             .trim()
@@ -42,9 +42,10 @@ document.getElementById("registerForm")
 
         const password =
             document.getElementById(
-                "password"
+                "registerPassword"
             )
             .value;
+
         // =========================
         // VALIDASI
         // =========================
@@ -198,29 +199,28 @@ document.getElementById("registerForm")
 
         if(data.status === "success"){
 
+            document.getElementById(
+                "registerPassword"
+            ).value = "";
+
             alert(
                 "Register berhasil"
             );
 
-            window.location =
-                "login.php";
+            // =========================
+            // PINDAH KE LOGIN SPA
+            // =========================
 
-        }else if(
-            data.status ===
-            "email_exists"
-        ){
-
-            alert(
-                "Email sudah digunakan"
+            showPage(
+                "loginPage"
             );
 
         }else{
 
             alert(
+                data.message ||
                 "Register gagal"
             );
-
-            console.log(data);
 
         }
 

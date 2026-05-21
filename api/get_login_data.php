@@ -4,81 +4,110 @@ include "../config/session.php";
 
 header("Content-Type: application/json");
 
+header(
+    "Cache-Control: no-store, no-cache, must-revalidate, max-age=0"
+);
+
+header(
+    "Pragma: no-cache"
+);
+
+// =========================
+// DATABASE
+// =========================
+
 include "../config/database.php";
+
 /** @var mysqli $conn */
 
 // =========================
-// CEK LOGIN
+// AMBIL JSON
+// =========================
+
+$raw =
+    file_get_contents(
+        "php://input"
+    );
+
+// =========================
+// VALIDASI REQUEST
+// =========================
+
+if(!$raw){
+
+    echo json_encode([
+
+        "status" => "error"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// DECODE JSON
+// =========================
+
+$data =
+    json_decode(
+        $raw,
+        true
+    );
+
+// =========================
+// VALIDASI JSON
+// =========================
+
+if(!$data){
+
+    echo json_encode([
+
+        "status" => "error"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// INPUT
+// =========================
+
+$email =
+    strtolower(
+
+        trim(
+
+            $data['email']
+            ?? ""
+
+        )
+
+    );
+
+// =========================
+// VALIDASI EMAIL
 // =========================
 
 if(
 
-    !isset($_SESSION['user_id'])
+    empty($email) ||
+
+    !filter_var(
+
+        $email,
+
+        FILTER_VALIDATE_EMAIL
+
+    )
 
 ){
 
     echo json_encode([
 
-        "status" => "error",
-
-        "message" =>
-            "Unauthorized"
-
-    ]);
-
-    exit;
-
-}
-
-// =========================
-// USER LOGIN
-// =========================
-
-$user_id =
-    intval(
-        $_SESSION['user_id']
-    );
-
-// =========================
-// VALIDASI PARAMETER
-// =========================
-
-if(!isset($_GET['id'])){
-
-    echo json_encode([
-
-        "status" => "error",
-
-        "message" =>
-            "ID tidak ditemukan"
-
-    ]);
-
-    exit;
-
-}
-
-// =========================
-// AMBIL ID
-// =========================
-
-$id =
-    intval(
-        $_GET['id']
-    );
-
-// =========================
-// VALIDASI ID
-// =========================
-
-if($id <= 0){
-
-    echo json_encode([
-
-        "status" => "error",
-
-        "message" =>
-            "ID invalid"
+        "status" => "error"
 
     ]);
 
@@ -96,13 +125,13 @@ $stmt =
         $conn,
 
         "SELECT
-            id,
-            encrypted_data,
-            iv
-        FROM vaults
 
-         WHERE id=?
-         AND user_id=?
+            salt,
+            iterations
+
+         FROM users
+
+         WHERE email = ?
 
          LIMIT 1"
 
@@ -116,10 +145,7 @@ if(!$stmt){
 
     echo json_encode([
 
-        "status" => "error",
-
-        "message" =>
-            "Prepare statement gagal"
+        "status" => "error"
 
     ]);
 
@@ -135,10 +161,9 @@ mysqli_stmt_bind_param(
 
     $stmt,
 
-    "ii",
+    "s",
 
-    $id,
-    $user_id
+    $email
 
 );
 
@@ -146,30 +171,11 @@ mysqli_stmt_bind_param(
 // EXECUTE
 // =========================
 
-mysqli_stmt_execute(
-    $stmt
-);
-
-$result =
-    mysqli_stmt_get_result(
-        $stmt
-    );
-
-// =========================
-// VAULT TIDAK ADA
-// =========================
-
-if(
-    mysqli_num_rows($result)
-    <= 0
-){
+if(!mysqli_stmt_execute($stmt)){
 
     echo json_encode([
 
-        "status" => "error",
-
-        "message" =>
-            "Vault tidak ditemukan"
+        "status" => "error"
 
     ]);
 
@@ -178,16 +184,52 @@ if(
 }
 
 // =========================
-// AMBIL DATA
+// RESULT
 // =========================
 
-$data =
+$result =
+    mysqli_stmt_get_result(
+        $stmt
+    );
+
+// =========================
+// USER TIDAK ADA
+// =========================
+
+if(
+
+    mysqli_num_rows($result)
+    === 0
+
+){
+
+    echo json_encode([
+
+        "status" => "error"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// USER DATA
+// =========================
+
+$user =
     mysqli_fetch_assoc(
         $result
     );
 
 // =========================
-// RESPONSE
+// CLOSE
+// =========================
+
+mysqli_stmt_close($stmt);
+
+// =========================
+// SUCCESS
 // =========================
 
 echo json_encode([
@@ -196,23 +238,14 @@ echo json_encode([
 
     "data" => [
 
-        "id" =>
-            $data['id'],
+        "salt" =>
+            $user['salt'],
 
-        "encrypted_data" =>
-            $data['encrypted_data'],
-
-        "iv" =>
-            $data['iv']
+        "iterations" =>
+            (int)$user['iterations']
 
     ]
 
 ]);
-
-// =========================
-// CLOSE
-// =========================
-
-mysqli_stmt_close($stmt);
 
 ?>

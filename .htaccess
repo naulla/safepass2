@@ -15,19 +15,16 @@ RewriteEngine On
 # =====================================
 
 RewriteRule ^config/ - [F,L]
-
 RewriteRule ^database/ - [F,L]
-
 RewriteRule ^vendor/ - [F,L]
 
 # =====================================
 # BLOCK SENSITIVE FILES
 # =====================================
 
-<FilesMatch "(\.env|composer\.json|composer\.lock)$">
+<FilesMatch "^(\.env|composer\.json|composer\.lock)$">
 
-    Order allow,deny
-    Deny from all
+    Require all denied
 
 </FilesMatch>
 
@@ -37,12 +34,12 @@ RewriteRule ^vendor/ - [F,L]
 
 <IfModule mod_headers.c>
 
-Header set X-Frame-Options "DENY"
+Header always set X-Frame-Options "DENY"
 
-Header set X-Content-Type-Options "nosniff"
+Header always set X-Content-Type-Options "nosniff"
 
-Header set Referrer-Policy "no-referrer"
+Header always set Referrer-Policy "no-referrer"
 
-Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.pwnedpasswords.com; object-src 'none';"
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.pwnedpasswords.com; object-src 'none';"
 
 </IfModule>

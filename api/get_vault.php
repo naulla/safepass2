@@ -1,21 +1,38 @@
 <?php
 
+include "../config/session.php";
+
 header("Content-Type: application/json");
 
-include "../config/database.php";
-/** @var mysqli $conn */
+header(
+    "Cache-Control: no-store, no-cache, must-revalidate, max-age=0"
+);
+
+header(
+    "Pragma: no-cache"
+);
+
 // =========================
-// VALIDASI PARAMETER
+// DATABASE
 // =========================
 
-if(!isset($_GET['user_id'])){
+include "../config/database.php";
+
+/** @var mysqli $conn */
+
+// =========================
+// CEK LOGIN
+// =========================
+
+if(
+
+    !isset($_SESSION['user_id'])
+
+){
 
     echo json_encode([
 
-        "status" => "error",
-
-        "message" =>
-            "user_id tidak ditemukan"
+        "status" => "unauthorized"
 
     ]);
 
@@ -24,26 +41,69 @@ if(!isset($_GET['user_id'])){
 }
 
 // =========================
-// AMBIL USER ID
+// USER ID DARI SESSION
 // =========================
 
 $user_id =
     intval(
-        $_GET['user_id']
+        $_SESSION['user_id']
     );
 
 // =========================
-// VALIDASI EMPTY
+// AMBIL JSON BODY
 // =========================
 
-if($user_id <= 0){
+$raw =
+    file_get_contents(
+        "php://input"
+    );
+
+// =========================
+// VALIDASI REQUEST
+// =========================
+
+if($raw === false){
 
     echo json_encode([
 
         "status" => "error",
 
         "message" =>
-            "user_id invalid"
+            "Request gagal"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// DECODE JSON
+// =========================
+
+$input =
+    json_decode(
+        $raw,
+        true
+    );
+
+// =========================
+// VALIDASI JSON
+// =========================
+
+if(
+
+    $input === null &&
+    json_last_error() !== JSON_ERROR_NONE
+
+){
+
+    echo json_encode([
+
+        "status" => "error",
+
+        "message" =>
+            "JSON invalid"
 
     ]);
 
@@ -63,17 +123,20 @@ $stmt =
         "SELECT
 
             id,
-            user_id,
             encrypted_data,
             iv
 
          FROM vaults
 
-         WHERE user_id=?
+         WHERE user_id = ?
 
          ORDER BY id DESC"
 
     );
+
+// =========================
+// PREPARE ERROR
+// =========================
 
 if(!$stmt){
 
@@ -108,9 +171,28 @@ mysqli_stmt_bind_param(
 // EXECUTE
 // =========================
 
-mysqli_stmt_execute(
-    $stmt
-);
+if(
+
+    !mysqli_stmt_execute($stmt)
+
+){
+
+    echo json_encode([
+
+        "status" => "error",
+
+        "message" =>
+            "Execute gagal"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// RESULT
+// =========================
 
 $result =
     mysqli_stmt_get_result(
@@ -118,10 +200,14 @@ $result =
     );
 
 // =========================
-// BUILD DATA
+// DATA ARRAY
 // =========================
 
 $data = [];
+
+// =========================
+// FETCH DATA
+// =========================
 
 while(
 
@@ -135,10 +221,7 @@ while(
     $data[] = [
 
         "id" =>
-            $row['id'],
-
-        "user_id" =>
-            $row['user_id'],
+            (int)$row['id'],
 
         "encrypted_data" =>
             $row['encrypted_data'],
@@ -151,15 +234,21 @@ while(
 }
 
 // =========================
-// RESPONSE
-// =========================
-
-echo json_encode($data);
-
-// =========================
 // CLOSE
 // =========================
 
 mysqli_stmt_close($stmt);
+
+// =========================
+// RESPONSE
+// =========================
+
+echo json_encode([
+
+    "status" => "success",
+
+    "data" => $data
+
+]);
 
 ?>

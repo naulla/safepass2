@@ -1,9 +1,42 @@
 <?php
 
+include "../config/session.php";
+
 header("Content-Type: application/json");
 
 include "../config/database.php";
 /** @var mysqli $conn */
+
+// =========================
+// CEK LOGIN
+// =========================
+
+if(
+
+    !isset($_SESSION['user_id'])
+
+){
+
+    echo json_encode([
+
+        "status" => "error",
+
+        "message" =>
+            "Unauthorized"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// USER LOGIN
+// =========================
+
+$user_id =
+    (int) $_SESSION['user_id'];
+
 // =========================
 // AMBIL JSON INPUT
 // =========================
@@ -82,7 +115,7 @@ $id =
     );
 
 // =========================
-// VALIDASI EMPTY
+// VALIDASI ID
 // =========================
 
 if($id <= 0){
@@ -101,7 +134,7 @@ if($id <= 0){
 }
 
 // =========================
-// CEK VAULT ADA
+// CEK VAULT MILIK USER
 // =========================
 
 $check =
@@ -111,17 +144,34 @@ $check =
 
         "SELECT id
          FROM vaults
-         WHERE id=?"
+         WHERE id = ?
+         AND user_id = ?"
 
     );
+
+if(!$check){
+
+    echo json_encode([
+
+        "status" => "error",
+
+        "message" =>
+            "Prepare gagal"
+
+    ]);
+
+    exit;
+
+}
 
 mysqli_stmt_bind_param(
 
     $check,
 
-    "i",
+    "ii",
 
-    $id
+    $id,
+    $user_id
 
 );
 
@@ -134,9 +184,15 @@ $result =
         $check
     );
 
+// =========================
+// VAULT TIDAK ADA
+// =========================
+
 if(
+
     mysqli_num_rows($result)
     <= 0
+
 ){
 
     echo json_encode([
@@ -152,8 +208,10 @@ if(
 
 }
 
+mysqli_stmt_close($check);
+
 // =========================
-// PREPARED STATEMENT
+// DELETE VAULT
 // =========================
 
 $stmt =
@@ -162,7 +220,8 @@ $stmt =
         $conn,
 
         "DELETE FROM vaults
-         WHERE id=?"
+         WHERE id = ?
+         AND user_id = ?"
 
     );
 
@@ -189,9 +248,10 @@ mysqli_stmt_bind_param(
 
     $stmt,
 
-    "i",
+    "ii",
 
-    $id
+    $id,
+    $user_id
 
 );
 
@@ -214,7 +274,7 @@ if(mysqli_stmt_execute($stmt)){
         "status" => "error",
 
         "message" =>
-            mysqli_error($conn)
+            "Delete gagal"
 
     ]);
 

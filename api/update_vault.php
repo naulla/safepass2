@@ -1,9 +1,45 @@
 <?php
 
+include "../config/session.php";
+
 header("Content-Type: application/json");
 
 include "../config/database.php";
+
 /** @var mysqli $conn */
+
+// =========================
+// CEK LOGIN
+// =========================
+
+if(
+
+    !isset($_SESSION['user_id'])
+
+){
+
+    http_response_code(401);
+
+    echo json_encode([
+
+        "status" => "error",
+
+        "message" =>
+            "Unauthorized"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// USER LOGIN
+// =========================
+
+$user_id =
+    (int)$_SESSION['user_id'];
+
 // =========================
 // AMBIL JSON INPUT
 // =========================
@@ -38,7 +74,12 @@ $data =
         true
     );
 
-if(!$data){
+if(
+
+    $data === null &&
+    json_last_error() !== JSON_ERROR_NONE
+
+){
 
     echo json_encode([
 
@@ -87,9 +128,7 @@ if(
 // =========================
 
 $id =
-    intval(
-        $data['id']
-    );
+    (int)$data['id'];
 
 $encrypted_data =
     trim(
@@ -107,7 +146,7 @@ $iv =
 
 if(
 
-    empty($id) ||
+    $id <= 0 ||
 
     empty($encrypted_data) ||
 
@@ -129,7 +168,38 @@ if(
 }
 
 // =========================
-// CEK VAULT ADA
+// VALIDASI BASE64
+// =========================
+
+if(
+
+    base64_decode(
+        $encrypted_data,
+        true
+    ) === false ||
+
+    base64_decode(
+        $iv,
+        true
+    ) === false
+
+){
+
+    echo json_encode([
+
+        "status" => "error",
+
+        "message" =>
+            "Format base64 invalid"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// CEK VAULT & OWNER
 // =========================
 
 $check =
@@ -138,20 +208,49 @@ $check =
         $conn,
 
         "SELECT id
+
          FROM vaults
-         WHERE id=?"
+
+         WHERE id=?
+         AND user_id=?
+
+         LIMIT 1"
 
     );
+
+if(!$check){
+
+    echo json_encode([
+
+        "status" => "error",
+
+        "message" =>
+            "Prepare gagal"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// BIND PARAM
+// =========================
 
 mysqli_stmt_bind_param(
 
     $check,
 
-    "i",
+    "ii",
 
-    $id
+    $id,
+    $user_id
 
 );
+
+// =========================
+// EXECUTE
+// =========================
 
 mysqli_stmt_execute(
     $check
@@ -162,9 +261,15 @@ $result =
         $check
     );
 
+// =========================
+// VALIDASI OWNER
+// =========================
+
 if(
+
     mysqli_num_rows($result)
     <= 0
+
 ){
 
     echo json_encode([
@@ -180,8 +285,12 @@ if(
 
 }
 
+mysqli_stmt_close(
+    $check
+);
+
 // =========================
-// PREPARED STATEMENT
+// UPDATE VAULT
 // =========================
 
 $stmt =
@@ -193,10 +302,13 @@ $stmt =
 
          SET
 
-         encrypted_data=?,
-         iv=?
+            encrypted_data=?,
+            iv=?
 
-         WHERE id=?"
+         WHERE
+
+            id=?
+            AND user_id=?"
 
     );
 
@@ -216,26 +328,31 @@ if(!$stmt){
 }
 
 // =========================
-// BIND PARAM
+// BIND UPDATE
 // =========================
 
 mysqli_stmt_bind_param(
 
     $stmt,
 
-    "ssi",
+    "ssii",
 
     $encrypted_data,
     $iv,
-    $id
+    $id,
+    $user_id
 
 );
 
 // =========================
-// EXECUTE
+// EXECUTE UPDATE
 // =========================
 
-if(mysqli_stmt_execute($stmt)){
+if(
+
+    mysqli_stmt_execute($stmt)
+
+){
 
     echo json_encode([
 
@@ -250,7 +367,7 @@ if(mysqli_stmt_execute($stmt)){
         "status" => "error",
 
         "message" =>
-            mysqli_error($conn)
+            "Update gagal"
 
     ]);
 

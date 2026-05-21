@@ -4,13 +4,27 @@
 
 async function saveVault(){
 
+    // =========================
+    // BUTTON
+    // =========================
+
     const btn =
         document.getElementById(
             "saveBtn"
         );
 
+    if(!btn){
+
+        console.log(
+            "saveBtn tidak ditemukan"
+        );
+
+        return;
+
+    }
+
     // =========================
-    // CEGAH SPAM CLICK
+    // CEGAH DOUBLE CLICK
     // =========================
 
     if(btn.disabled){
@@ -27,39 +41,70 @@ async function saveVault(){
     try{
 
         // =========================
-        // AMBIL INPUT
+        // INPUT ELEMENT
+        // =========================
+
+        const serviceInput =
+            document.getElementById(
+                "service"
+            );
+
+        const usernameInput =
+            document.getElementById(
+                "username"
+            );
+
+        const passwordInput =
+            document.getElementById(
+                "password"
+            );
+
+        const noteInput =
+            document.getElementById(
+                "note"
+            );
+
+        // =========================
+        // VALIDASI ELEMENT
+        // =========================
+
+        if(
+
+            !serviceInput ||
+            !usernameInput ||
+            !passwordInput ||
+            !noteInput
+
+        ){
+
+            throw new Error(
+                "Form element tidak ditemukan"
+            );
+
+        }
+
+        // =========================
+        // AMBIL VALUE
         // =========================
 
         const service =
-            document.getElementById(
-                "service"
-            )
-            .value
+            serviceInput.value
             .trim();
 
         const username =
-            document.getElementById(
-                "username"
-            )
-            .value
+            usernameInput.value
             .trim();
 
         const passwordField =
-            document.getElementById(
-                "password"
-            )
-            .value
+            passwordInput.value
             .trim();
 
         const note =
-            document.getElementById(
-                "note"
-            )
-            .value
+            noteInput.value
             .trim();
 
         // =========================
-        // VALIDASI
+        // VALIDASI INPUT
         // =========================
 
         if(
@@ -79,7 +124,7 @@ async function saveVault(){
         }
 
         // =========================
-        // CEK LOGIN
+        // VALIDASI LOGIN
         // =========================
 
         const user_id =
@@ -87,24 +132,35 @@ async function saveVault(){
                 "user_id"
             );
 
-        const aesKey =
-            sessionStorage.getItem(
-                "aesKey"
-            );
-
-        if(
-
-            !user_id ||
-            !aesKey
-
-        ){
+        if(!user_id){
 
             alert(
                 "Session login habis"
             );
 
-            window.location =
-                "login.php";
+            showPage(
+                "loginPage"
+            );
+
+            return;
+
+        }
+
+        // =========================
+        // VALIDASI AES KEY
+        // =========================
+
+        try{
+
+            await getAESKey();
+
+        }catch{
+
+            alert(
+                "AES Key hilang, silakan login ulang"
+            );
+
+            logout();
 
             return;
 
@@ -131,7 +187,7 @@ async function saveVault(){
         };
 
         // =========================
-        // ENCRYPT
+        // ENCRYPT DATA
         // =========================
 
         const encrypted =
@@ -140,7 +196,7 @@ async function saveVault(){
             );
 
         // =========================
-        // SAVE DATABASE
+        // REQUEST SAVE
         // =========================
 
         const response =
@@ -159,7 +215,8 @@ async function saveVault(){
 
                     body:JSON.stringify({
 
-                        user_id:user_id,
+                        user_id:
+                            user_id,
 
                         encrypted_data:
                             encrypted
@@ -182,6 +239,10 @@ async function saveVault(){
 
         }
 
+        // =========================
+        // JSON RESPONSE
+        // =========================
+
         const result =
             await response.json();
 
@@ -198,12 +259,44 @@ async function saveVault(){
                 "Vault berhasil disimpan"
             );
 
-            window.location =
-                "dashboard.php";
+            // =========================
+            // RESET FORM
+            // =========================
+
+            serviceInput.value = "";
+
+            usernameInput.value = "";
+
+            passwordInput.value = "";
+
+            noteInput.value = "";
+
+            // =========================
+            // KEMBALI DASHBOARD
+            // =========================
+
+            showPage(
+                "dashboardPage"
+            );
+
+            // =========================
+            // RELOAD VAULT
+            // =========================
+
+            if(
+                typeof loadVault ===
+                "function"
+            ){
+
+                loadVault();
+
+            }
 
         }else{
 
-            console.log(result);
+            console.log(
+                result
+            );
 
             alert(
                 "Gagal menyimpan vault"

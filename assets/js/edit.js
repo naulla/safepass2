@@ -1,36 +1,93 @@
+// =========================
+// CURRENT VAULT ID
+// =========================
+
+let currentVaultId = null;
+
+// =========================
+// OPEN EDIT PAGE
+// =========================
+
+async function openEdit(id){
+
+    currentVaultId = id;
+
+    showPage(
+        "editPage"
+    );
+
+    await loadSingleVault();
+
+}
+
+// =========================
+// LOAD SINGLE VAULT
+// =========================
+
 async function loadSingleVault(){
 
     try{
 
-        const response = await fetch(
-            "api/get_single_vault.php?id=" + vaultId
-        );
+        if(!currentVaultId){
 
-        const result = await response.json();
+            alert(
+                "Vault ID tidak ditemukan"
+            );
 
-        console.log("RESULT:", result);
-
-        if(result.status !== "success"){
-
-            alert(result.message);
             return;
 
         }
 
-        const vault = result.data;
+        const response = await fetch(
 
-        console.log("VAULT:", vault);
+            "api/get_single_vault.php?id="
+            + currentVaultId
+
+        );
+
+        const result =
+            await response.json();
+
+        console.log(
+            "RESULT:",
+            result
+        );
+
+        if(
+            result.status !==
+            "success"
+        ){
+
+            alert(
+                result.message
+            );
+
+            return;
+
+        }
+
+        const vault =
+            result.data;
+
+        console.log(
+            "VAULT:",
+            vault
+        );
 
         const encrypted = {
 
-            data: vault.encrypted_data,
-            iv: vault.iv
+            data:
+                vault.encrypted_data,
+
+            iv:
+                vault.iv
 
         };
 
-        console.log("ENCRYPTED:", encrypted);
-
-        // CEK SEBELUM DECRYPT
+        console.log(
+            "ENCRYPTED:",
+            encrypted
+        );
 
         if(
             !encrypted.data ||
@@ -46,23 +103,37 @@ async function loadSingleVault(){
         }
 
         const decrypted =
-            await decryptData(encrypted);
+            await decryptData(
+                encrypted
+            );
 
         console.log(
             "DECRYPTED:",
             decrypted
         );
 
-        document.getElementById("service").value =
+        // =========================
+        // SET FORM
+        // =========================
+
+        document.getElementById(
+            "editService"
+        ).value =
             decrypted.service || "";
 
-        document.getElementById("username").value =
+        document.getElementById(
+            "editUsername"
+        ).value =
             decrypted.username || "";
 
-        document.getElementById("password").value =
+        document.getElementById(
+            "editPassword"
+        ).value =
             decrypted.password || "";
 
-        document.getElementById("note").value =
+        document.getElementById(
+            "editNote"
+        ).value =
             decrypted.note || "";
 
     }catch(error){
@@ -76,63 +147,125 @@ async function loadSingleVault(){
 
 }
 
+// =========================
+// UPDATE VAULT
+// =========================
+
 async function updateVault(){
 
-    const vaultData = {
+    try{
 
-        service:
-        document.getElementById("service").value,
+        if(!currentVaultId){
 
-        username:
-        document.getElementById("username").value,
+            alert(
+                "Vault ID tidak ditemukan"
+            );
 
-        password:
-        document.getElementById("password").value,
-
-        note:
-        document.getElementById("note").value
-
-    };
-
-    const encrypted =
-        await encryptData(
-            vaultData,
-            sessionStorage.getItem("masterKey")
-        );
-
-    fetch("api/update_vault.php",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            id:vaultId,
-            encrypted_data:encrypted
-
-        })
-
-    })
-    .then(res=>res.json())
-    .then(data=>{
-
-        if(data.status === "success"){
-
-            alert("Vault berhasil diupdate");
-
-            window.location = "dashboard.php";
-
-        }else{
-
-            alert(data.message);
+            return;
 
         }
 
-    });
+        const vaultData = {
+
+            service:
+            document.getElementById(
+                "editService"
+            ).value,
+
+            username:
+            document.getElementById(
+                "editUsername"
+            ).value,
+
+            password:
+            document.getElementById(
+                "editPassword"
+            ).value,
+
+            note:
+            document.getElementById(
+                "editNote"
+            ).value
+
+        };
+
+        const encrypted =
+            await encryptData(
+                vaultData
+            );
+
+        const response =
+            await fetch(
+
+                "api/update_vault.php",
+
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                        "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+    id:
+        currentVaultId,
+
+    encrypted_data:{
+
+        data:
+            encrypted.data,
+
+        iv:
+            encrypted.iv
+
+    }
+
+})
+
+                }
+
+            );
+
+        const result =
+            await response.json();
+
+        if(
+            result.status ===
+            "success"
+        ){
+
+            alert(
+                "Vault berhasil diupdate"
+            );
+
+            showPage(
+                "dashboardPage"
+            );
+
+            await loadVault();
+
+        }else{
+
+            alert(
+                result.message
+            );
+
+        }
+
+    }catch(error){
+
+        console.log(
+            "UPDATE ERROR:",
+            error
+        );
+
+        alert(
+            "Gagal update vault"
+        );
+
+    }
 
 }
-
-loadSingleVault();

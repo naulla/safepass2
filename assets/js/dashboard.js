@@ -4,7 +4,106 @@
 
 let isLoadingVault = false;
 
+// =========================
+// GET VAULTS
+// =========================
+
+async function getVaults(){
+
+    const user_id =
+        sessionStorage.getItem(
+            "user_id"
+        );
+
+    if(!user_id){
+
+        throw new Error(
+            "Session login habis"
+        );
+
+    }
+
+    const response =
+        await fetch(
+            "api/get_vault.php",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:JSON.stringify({
+                    user_id:user_id
+                })
+            }
+        );
+
+    if(!response.ok){
+
+        throw new Error(
+            "Server error"
+        );
+
+    }
+
+    const result =
+        await response.json();
+
+    if(
+        result.status !==
+        "success"
+    ){
+
+        throw new Error(
+            "Load vault gagal"
+        );
+
+    }
+
+    return result.data || [];
+
+}
+
+// =========================
+// DELETE VAULT API
+// =========================
+
+async function deleteVaultApi(id){
+
+    const response =
+        await fetch(
+            "api/delete_vault.php",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:JSON.stringify({
+                    id:id
+                })
+            }
+        );
+
+    if(!response.ok){
+
+        throw new Error(
+            "Server error"
+        );
+
+    }
+
+    return await response.json();
+
+}
+
+// =========================
 // LOAD VAULT
+// =========================
 
 async function loadVault(){
 
@@ -23,16 +122,58 @@ async function loadVault(){
 
     try{
 
-        // LOADING
+        if(!vaultList){
 
-        showLoading(vaultList);
+            console.log(
+                "vaultList tidak ditemukan"
+            );
 
-        // GET VAULT
+            return;
+
+        }
+
+        // =========================
+        // SHOW LOADING
+        // =========================
+
+        showLoading(
+            vaultList
+        );
+
+        // =========================
+        // LOAD AES KEY
+        // =========================
+
+        try{
+
+            await getAESKey();
+
+        }catch(error){
+
+            console.log(
+                "AES KEY ERROR:",
+                error
+            );
+
+            showErrorState(
+                vaultList,
+                "Silakan login ulang"
+            );
+
+            return;
+
+        }
+
+        // =========================
+        // GET DATA
+        // =========================
 
         const vaults =
             await getVaults();
 
-        // EMPTY
+        // =========================
+        // EMPTY STATE
+        // =========================
 
         if(vaults.length === 0){
 
@@ -44,53 +185,32 @@ async function loadVault(){
 
         }
 
-        // AES KEY CHECK
-
-        const aesKey =
-            sessionStorage.getItem(
-                "aesKey"
-            );
-
-        if(!aesKey){
-
-            throw new Error(
-                "AES Key hilang"
-            );
-
-        }
-
+        // =========================
         // CLEAR TABLE
+        // =========================
 
         vaultList.innerHTML = "";
 
-        // LOOP VAULT
+        // =========================
+        // RENDER ROW
+        // =========================
 
-        for(let vault of vaults){
+        for(
+            const vault
+            of vaults
+        ){
 
             try{
 
-                await new Promise(
-
-                    resolve =>
-
-                        setTimeout(
-                            resolve,
-                            0
-                        )
-
-                );
-
                 await createVaultRow(
-
                     vault,
                     vaultList
-
                 );
 
             }catch(error){
 
                 console.log(
-                    "DECRYPT ERROR:",
+                    "CREATE ROW ERROR:",
                     error
                 );
 
@@ -98,7 +218,9 @@ async function loadVault(){
 
         }
 
-        // ALL FAILED
+        // =========================
+        // CHECK IF FAILED
+        // =========================
 
         if(
             vaultList.innerHTML
@@ -106,11 +228,8 @@ async function loadVault(){
         ){
 
             showErrorState(
-
                 vaultList,
-
                 "Gagal decrypt vault"
-
             );
 
         }
@@ -123,11 +242,8 @@ async function loadVault(){
         );
 
         showErrorState(
-
             vaultList,
-
             "Gagal memuat vault"
-
         );
 
     }finally{
@@ -138,13 +254,16 @@ async function loadVault(){
 
 }
 
+// =========================
 // DELETE VAULT
+// =========================
 
 async function deleteVault(id){
 
-    const konfirmasi = confirm(
-        "Yakin ingin menghapus vault?"
-    );
+    const konfirmasi =
+        confirm(
+            "Yakin ingin menghapus vault?"
+        );
 
     if(!konfirmasi){
 
@@ -166,7 +285,7 @@ async function deleteVault(id){
                 "Vault berhasil dihapus"
             );
 
-            loadVault();
+            await loadVault();
 
         }else{
 
@@ -178,7 +297,10 @@ async function deleteVault(id){
 
     }catch(error){
 
-        console.log(error);
+        console.log(
+            "DELETE ERROR:",
+            error
+        );
 
         alert(
             "Terjadi error"
@@ -188,7 +310,35 @@ async function deleteVault(id){
 
 }
 
+// =========================
+// OPEN EDIT PAGE
+// =========================
+
+function openEdit(id){
+
+    sessionStorage.setItem(
+        "editVaultId",
+        id
+    );
+
+    showPage(
+        "editPage"
+    );
+
+    if(
+        typeof loadEditVault ===
+        "function"
+    ){
+
+        loadEditVault(id);
+
+    }
+
+}
+
+// =========================
 // LOGOUT
+// =========================
 
 function logout(){
 
@@ -196,11 +346,42 @@ function logout(){
 
     sessionStorage.clear();
 
-    window.location =
-        "login.php";
+    showPage(
+        "loginPage"
+    );
 
 }
 
-// LOAD
+// =========================
+// AUTO LOAD
+// =========================
 
-loadVault();
+window.addEventListener(
+
+    "DOMContentLoaded",
+
+    async () => {
+
+        if(
+            sessionStorage.getItem(
+                "isLoggedIn"
+            )
+        ){
+
+            showPage(
+                "dashboardPage"
+            );
+
+            await loadVault();
+
+        }else{
+
+            showPage(
+                "loginPage"
+            );
+
+        }
+
+    }
+
+);

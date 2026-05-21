@@ -5,6 +5,8 @@ if(
 
     alert("Silakan login terlebih dahulu");
 
-    window.location = "login.php";
+    showPage(
+                "loginPage"
+            );
 
 }

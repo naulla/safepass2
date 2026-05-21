@@ -21,8 +21,9 @@ async function getVaults(){
         !isLoggedIn
     ){
 
-        window.location =
-            "login.php";
+        showPage(
+                "loginPage"
+            );
 
         return [];
 

@@ -2,21 +2,19 @@
 // vault-ui.js
 // =========================
 
+// =========================
 // LOADING
+// =========================
 
 function showLoading(vaultList){
 
     vaultList.innerHTML = "";
 
     const row =
-        document.createElement(
-            "tr"
-        );
+        document.createElement("tr");
 
     const cell =
-        document.createElement(
-            "td"
-        );
+        document.createElement("td");
 
     cell.colSpan = 6;
 
@@ -35,21 +33,19 @@ function showLoading(vaultList){
 
 }
 
+// =========================
 // EMPTY STATE
+// =========================
 
 function showEmptyState(vaultList){
 
     vaultList.innerHTML = "";
 
     const row =
-        document.createElement(
-            "tr"
-        );
+        document.createElement("tr");
 
     const cell =
-        document.createElement(
-            "td"
-        );
+        document.createElement("td");
 
     cell.colSpan = 6;
 
@@ -68,7 +64,9 @@ function showEmptyState(vaultList){
 
 }
 
+// =========================
 // ERROR STATE
+// =========================
 
 function showErrorState(
     vaultList,
@@ -78,14 +76,10 @@ function showErrorState(
     vaultList.innerHTML = "";
 
     const row =
-        document.createElement(
-            "tr"
-        );
+        document.createElement("tr");
 
     const cell =
-        document.createElement(
-            "td"
-        );
+        document.createElement("td");
 
     cell.colSpan = 6;
 
@@ -107,7 +101,9 @@ function showErrorState(
 
 }
 
+// =========================
 // CREATE VAULT ROW
+// =========================
 
 async function createVaultRow(
     vault,
@@ -130,21 +126,17 @@ async function createVaultRow(
         );
 
     const tr =
-        document.createElement(
-            "tr"
-        );
+        document.createElement("tr");
 
+    // =========================
     // SERVICE
+    // =========================
 
     const tdService =
-        document.createElement(
-            "td"
-        );
+        document.createElement("td");
 
     const badge =
-        document.createElement(
-            "span"
-        );
+        document.createElement("span");
 
     badge.className =
         "badge";
@@ -152,39 +144,33 @@ async function createVaultRow(
     badge.textContent =
         decrypted.service;
 
-    tdService.appendChild(
-        badge
-    );
+    tdService.appendChild(badge);
 
+    // =========================
     // USERNAME
+    // =========================
 
     const tdUsername =
-        document.createElement(
-            "td"
-        );
+        document.createElement("td");
 
     tdUsername.textContent =
         decrypted.username;
 
+    // =========================
     // PASSWORD
+    // =========================
 
     const tdPassword =
-        document.createElement(
-            "td"
-        );
+        document.createElement("td");
 
     const passWrapper =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     passWrapper.className =
         "password-field";
 
     const passInput =
-        document.createElement(
-            "input"
-        );
+        document.createElement("input");
 
     passInput.type =
         "password";
@@ -193,44 +179,41 @@ async function createVaultRow(
         decrypted.password;
 
     passInput.id =
-        "pass" + vault.id;
+        "vaultPass" + vault.id;
 
     passInput.readOnly =
         true;
 
+    // =========================
     // TOGGLE BUTTON
+    // =========================
 
     const toggleBtn =
-        document.createElement(
-            "button"
-        );
+        document.createElement("button");
 
     toggleBtn.className =
         "small-btn";
 
-    toggleBtn.textContent =
+    toggleBtn.innerHTML =
         "👁";
 
     toggleBtn.addEventListener(
-
         "click",
-
         () => {
 
-            togglePassword(
+            toggleVaultPassword(
                 vault.id
             );
 
         }
-
     );
 
+    // =========================
     // COPY BUTTON
+    // =========================
 
     const copyBtn =
-        document.createElement(
-            "button"
-        );
+        document.createElement("button");
 
     copyBtn.className =
         "small-btn";
@@ -239,9 +222,7 @@ async function createVaultRow(
         "Copy";
 
     copyBtn.addEventListener(
-
         "click",
-
         () => {
 
             copyPassword(
@@ -249,7 +230,6 @@ async function createVaultRow(
             );
 
         }
-
     );
 
     passWrapper.appendChild(
@@ -269,13 +249,11 @@ async function createVaultRow(
     );
 
     // =========================
-    // PASSWORD STATUS
+    // STATUS
     // =========================
 
     const tdStatus =
-        document.createElement(
-            "td"
-        );
+        document.createElement("td");
 
     const strength =
         getPasswordStrength(
@@ -283,9 +261,7 @@ async function createVaultRow(
         );
 
     const statusBadge =
-        document.createElement(
-            "span"
-        );
+        document.createElement("span");
 
     statusBadge.className =
         "status-badge "
@@ -299,9 +275,7 @@ async function createVaultRow(
     // =========================
 
     checkPwnedPassword(
-
         decrypted.password
-
     ).then(isPwned => {
 
         if(isPwned){
@@ -320,46 +294,33 @@ async function createVaultRow(
         statusBadge
     );
 
+    // =========================
     // NOTE
+    // =========================
 
     const tdNote =
-        document.createElement(
-            "td"
-        );
+        document.createElement("td");
 
     tdNote.textContent =
         decrypted.note || "-";
 
+    // =========================
     // ACTION
+    // =========================
 
     const tdAction =
-        document.createElement(
-            "td"
-        );
+        document.createElement("td");
 
     const actionGroup =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     actionGroup.className =
         "action-group";
 
     // EDIT
 
-    const editLink =
-        document.createElement(
-            "a"
-        );
-
-    editLink.href =
-        "edit.php?id="
-        + vault.id;
-
     const editBtn =
-        document.createElement(
-            "button"
-        );
+        document.createElement("button");
 
     editBtn.className =
         "small-btn";
@@ -367,16 +328,19 @@ async function createVaultRow(
     editBtn.textContent =
         "Edit";
 
-    editLink.appendChild(
-        editBtn
+    editBtn.addEventListener(
+        "click",
+        () => {
+
+            editVault(vault.id);
+
+        }
     );
 
     // DELETE
 
     const deleteBtn =
-        document.createElement(
-            "button"
-        );
+        document.createElement("button");
 
     deleteBtn.className =
         "small-btn";
@@ -385,9 +349,7 @@ async function createVaultRow(
         "Hapus";
 
     deleteBtn.addEventListener(
-
         "click",
-
         () => {
 
             deleteVault(
@@ -395,11 +357,10 @@ async function createVaultRow(
             );
 
         }
-
     );
 
     actionGroup.appendChild(
-        editLink
+        editBtn
     );
 
     actionGroup.appendChild(
@@ -410,45 +371,35 @@ async function createVaultRow(
         actionGroup
     );
 
+    // =========================
     // APPEND
+    // =========================
 
-    tr.appendChild(
-        tdService
-    );
+    tr.appendChild(tdService);
 
-    tr.appendChild(
-        tdUsername
-    );
+    tr.appendChild(tdUsername);
 
-    tr.appendChild(
-        tdPassword
-    );
+    tr.appendChild(tdPassword);
 
-    tr.appendChild(
-        tdStatus
-    );
+    tr.appendChild(tdStatus);
 
-    tr.appendChild(
-        tdNote
-    );
+    tr.appendChild(tdNote);
 
-    tr.appendChild(
-        tdAction
-    );
+    tr.appendChild(tdAction);
 
-    vaultList.appendChild(
-        tr
-    );
+    vaultList.appendChild(tr);
 
 }
 
-// TOGGLE PASSWORD
+// =========================
+// TOGGLE VAULT PASSWORD
+// =========================
 
-function togglePassword(id){
+function toggleVaultPassword(id){
 
     const input =
         document.getElementById(
-            "pass" + id
+            "vaultPass" + id
         );
 
     if(!input){
@@ -457,19 +408,26 @@ function togglePassword(id){
 
     }
 
-    if(input.type === "password"){
+    if(
+        input.type ===
+        "password"
+    ){
 
-        input.type = "text";
+        input.type =
+            "text";
 
     }else{
 
-        input.type = "password";
+        input.type =
+            "password";
 
     }
 
 }
 
+// =========================
 // COPY PASSWORD
+// =========================
 
 async function copyPassword(password){
 
@@ -477,6 +435,10 @@ async function copyPassword(password){
 
         await navigator.clipboard
         .writeText(password);
+
+        alert(
+            "Password berhasil dicopy"
+        );
 
     }catch(error){
 

@@ -1,9 +1,17 @@
 <?php
-session_start();
+
+include "../config/session.php";
+
 header("Content-Type: application/json");
 
+// =========================
+// DATABASE
+// =========================
+
 include "../config/database.php";
+
 /** @var mysqli $conn */
+
 // =========================
 // AMBIL JSON
 // =========================
@@ -12,6 +20,26 @@ $raw =
     file_get_contents(
         "php://input"
     );
+
+// =========================
+// VALIDASI REQUEST
+// =========================
+
+if(!$raw){
+
+    echo json_encode([
+
+        "status" => "invalid_request"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// DECODE JSON
+// =========================
 
 $data =
     json_decode(
@@ -27,7 +55,7 @@ if(!$data){
 
     echo json_encode([
 
-        "status"=>"invalid_json"
+        "status" => "invalid_json"
 
     ]);
 
@@ -51,15 +79,55 @@ $email =
 
     );
 
+$clientVerifier =
+    trim(
+
+        $data['verifier']
+        ?? ""
+
+    );
+
 // =========================
-// VALIDASI
+// VALIDASI INPUT
 // =========================
 
-if(empty($email)){
+if(
+
+    empty($email) ||
+
+    empty($clientVerifier)
+
+){
 
     echo json_encode([
 
-        "status"=>"empty_email"
+        "status" => "empty_field"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// VALIDASI EMAIL
+// =========================
+
+if(
+
+    !filter_var(
+
+        $email,
+
+        FILTER_VALIDATE_EMAIL
+
+    )
+
+){
+
+    echo json_encode([
+
+        "status" => "invalid_email"
 
     ]);
 
@@ -93,14 +161,14 @@ $stmt =
     );
 
 // =========================
-// CEK PREPARE ERROR
+// CEK PREPARE
 // =========================
 
 if(!$stmt){
 
     echo json_encode([
 
-        "status"=>"prepare_error"
+        "status" => "prepare_error"
 
     ]);
 
@@ -130,7 +198,7 @@ if(!mysqli_stmt_execute($stmt)){
 
     echo json_encode([
 
-        "status"=>"execute_error"
+        "status" => "execute_error"
 
     ]);
 
@@ -139,7 +207,7 @@ if(!mysqli_stmt_execute($stmt)){
 }
 
 // =========================
-// GET RESULT
+// RESULT
 // =========================
 
 $result =
@@ -151,11 +219,16 @@ $result =
 // USER TIDAK ADA
 // =========================
 
-if(mysqli_num_rows($result) === 0){
+if(
+
+    mysqli_num_rows($result)
+    === 0
+
+){
 
     echo json_encode([
 
-        "status"=>"error"
+        "status" => "error"
 
     ]);
 
@@ -171,12 +244,7 @@ $user =
     mysqli_fetch_assoc(
         $result
     );
-// =========================
-// SET SESSION
-// =========================
 
-$_SESSION['user_id'] =
-    (int)$user['id'];
 // =========================
 // CLOSE STATEMENT
 // =========================
@@ -184,23 +252,62 @@ $_SESSION['user_id'] =
 mysqli_stmt_close($stmt);
 
 // =========================
+// VERIFIER CHECK
+// =========================
+
+if(
+
+    !hash_equals(
+
+        $user['verifier'],
+
+        $clientVerifier
+
+    )
+
+){
+
+    echo json_encode([
+
+        "status" => "error"
+
+    ]);
+
+    exit;
+
+}
+
+// =========================
+// REGENERATE SESSION
+// =========================
+
+session_regenerate_id(true);
+
+// =========================
+// SET SESSION
+// =========================
+
+$_SESSION['user_id'] =
+    (int)$user['id'];
+
+$_SESSION['logged_in'] =
+    true;
+
+// =========================
 // SUCCESS
 // =========================
 
 echo json_encode([
 
-    "status"=>"success",
+    "status" => "success",
 
-    "data"=>[
+    "data" => [
 
         "id" =>
             $user['id'],
 
         "email" =>
             $user['email'],
-
-        "verifier" =>
-            $user['verifier'],
 
         "salt" =>
             $user['salt'],
@@ -211,4 +318,5 @@ echo json_encode([
     ]
 
 ]);
+
 ?>
