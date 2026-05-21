@@ -521,6 +521,26 @@ textarea{
 
         </div>
 
+        <!-- SEARCH & FILTER -->
+
+        <div class="vault-tools">
+
+            <input
+                type="text"
+                id="searchVault"
+                placeholder="Cari service / username..."
+            >
+
+            <select id="filterService">
+
+                <option value="all">
+                    Semua Service
+                </option>
+
+            </select>
+
+        </div>
+
         <div class="table-container">
 
             <table>

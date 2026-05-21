@@ -390,3 +390,40 @@ a:hover{
 .small-btn:hover{
     background:#334155;
 }
+
+/* ========================= */
+/* SEARCH FILTER */
+/* ========================= */
+
+.vault-tools{
+    display:flex;
+    gap:12px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+}
+
+.vault-tools input,
+.vault-tools select{
+
+    padding:10px 14px;
+
+    border-radius:10px;
+
+    border:1px solid #334155;
+
+    background:#0f172a;
+
+    color:white;
+
+    outline:none;
+
+    min-width:220px;
+
+}
+
+.vault-tools input:focus,
+.vault-tools select:focus{
+
+    border-color:#4f46e5;
+
+}

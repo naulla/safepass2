@@ -4,6 +4,8 @@
 
 let isLoadingVault = false;
 
+let allVaults = [];
+
 // =========================
 // GET VAULTS
 // =========================
@@ -170,6 +172,10 @@ async function loadVault(){
 
         const vaults =
             await getVaults();
+
+        allVaults = vaults;
+
+        populateServiceFilter(vaults);
 
         // =========================
         // EMPTY STATE
@@ -378,6 +384,265 @@ window.addEventListener(
 
             showPage(
                 "loginPage"
+            );
+
+        }
+
+    }
+
+);
+
+// =========================
+// SEARCH + FILTER
+// =========================
+
+async function filterVaults(){
+
+    const vaultList =
+        document.getElementById(
+            "vaultList"
+        );
+
+    const search =
+        document
+        .getElementById(
+            "searchVault"
+        )
+        .value
+        .toLowerCase();
+
+    const filter =
+        document
+        .getElementById(
+            "filterService"
+        )
+        .value;
+
+    vaultList.innerHTML = "";
+
+    for(
+        const vault
+        of allVaults
+    ){
+
+        try{
+
+            const decrypted =
+                await decryptData({
+
+                    data:
+                        vault.encrypted_data,
+
+                    iv:
+                        vault.iv
+
+                });
+
+            const strength =
+                getPasswordStrength(
+                    decrypted.password
+                );
+
+            // SEARCH
+
+            const matchSearch =
+
+            decrypted.service
+            .toLowerCase()
+            .includes(search)
+
+            ||
+
+            decrypted.username
+            .toLowerCase()
+            .includes(search)
+
+            ||
+
+            (
+                decrypted.note || ""
+            )
+            .toLowerCase()
+            .includes(search);
+
+            // FILTER
+            let matchFilter =
+                true;
+
+            if(
+                filter !== "all"
+            ){
+
+                matchFilter =
+
+                    decrypted.service ===
+                    filter;
+
+            }
+
+            // SHOW
+
+            if(
+                matchSearch &&
+                matchFilter
+            ){
+
+                await createVaultRow(
+                    vault,
+                    vaultList
+                );
+
+            }
+
+        }catch(error){
+
+            console.log(error);
+
+        }
+
+    }
+
+    // EMPTY
+
+    if(
+        vaultList.innerHTML
+        .trim() === ""
+    ){
+
+        showErrorState(
+            vaultList,
+            "Data tidak ditemukan"
+        );
+
+    }
+
+}
+
+// =========================
+// POPULATE SERVICE FILTER
+// =========================
+
+async function populateServiceFilter(vaults){
+
+    const select =
+        document.getElementById(
+            "filterService"
+        );
+
+    if(!select){
+
+        return;
+
+    }
+
+    // RESET
+
+    select.innerHTML = `
+
+        <option value="all">
+            Semua Service
+        </option>
+
+    `;
+
+    const services =
+        new Set();
+
+    for(
+        const vault
+        of vaults
+    ){
+
+        try{
+
+            const decrypted =
+                await decryptData({
+
+                    data:
+                        vault.encrypted_data,
+
+                    iv:
+                        vault.iv
+
+                });
+
+            if(
+                decrypted.service
+            ){
+
+                services.add(
+                    decrypted.service
+                );
+
+            }
+
+        }catch(error){
+
+            console.log(error);
+
+        }
+
+    }
+
+    // APPEND OPTION
+
+    services.forEach(service => {
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            service;
+
+        option.textContent =
+            service;
+
+        select.appendChild(
+            option
+        );
+
+    });
+
+}
+
+// =========================
+// EVENT SEARCH FILTER
+// =========================
+
+window.addEventListener(
+
+    "DOMContentLoaded",
+
+    () => {
+
+        const searchInput =
+            document.getElementById(
+                "searchVault"
+            );
+
+        const filterSelect =
+            document.getElementById(
+                "filterService"
+            );
+
+        if(searchInput){
+
+            searchInput
+            .addEventListener(
+                "input",
+                filterVaults
+            );
+
+        }
+
+        if(filterSelect){
+
+            filterSelect
+            .addEventListener(
+                "change",
+                filterVaults
             );
 
         }

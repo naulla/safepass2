@@ -332,11 +332,10 @@ async function createVaultRow(
         "click",
         () => {
 
-            editVault(vault.id);
+            openEdit(vault.id);
 
         }
     );
-
     // DELETE
 
     const deleteBtn =
