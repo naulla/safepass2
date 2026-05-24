@@ -1,7 +1,3 @@
-// =========================
-// REGISTER FORM
-// =========================
-
 document.getElementById("registerForm")
 .addEventListener("submit", async function(e){
 
@@ -11,10 +7,6 @@ document.getElementById("registerForm")
         document.getElementById(
             "registerBtn"
         );
-
-    // =========================
-    // CEGAH SPAM KLIK
-    // =========================
 
     if(btn.disabled){
 
@@ -27,10 +19,6 @@ document.getElementById("registerForm")
     btn.innerText = "Loading...";
 
     try{
-
-        // =========================
-        // INPUT
-        // =========================
 
         const email =
             document.getElementById(
@@ -46,10 +34,6 @@ document.getElementById("registerForm")
             )
             .value;
 
-        // =========================
-        // VALIDASI
-        // =========================
-
         if(!email || !password){
 
             alert(
@@ -59,10 +43,6 @@ document.getElementById("registerForm")
             return;
 
         }
-
-        // =========================
-        // VALIDASI EMAIL
-        // =========================
 
         const emailRegex =
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -77,10 +57,6 @@ document.getElementById("registerForm")
 
         }
 
-        // =========================
-        // PASSWORD MINIMAL
-        // =========================
-
         if(password.length < 8){
 
             alert(
@@ -91,23 +67,11 @@ document.getElementById("registerForm")
 
         }
 
-        // =========================
-        // PBKDF2 ITERATIONS
-        // =========================
-
         const iterations =
             PBKDF2_ITERATIONS;
 
-        // =========================
-        // GENERATE SALT
-        // =========================
-
         const salt =
             generateSalt();
-
-        // =========================
-        // GENERATE VERIFIER
-        // =========================
 
         const verifier =
             await generateVerifier(
@@ -120,16 +84,8 @@ document.getElementById("registerForm")
 
             );
 
-        // =========================
-        // BASE64 SALT
-        // =========================
-
         const saltBase64 =
             bufToBase64(salt);
-
-        // =========================
-        // REQUEST REGISTER
-        // =========================
 
         const response =
             await fetch(
@@ -162,10 +118,6 @@ document.getElementById("registerForm")
 
             );
 
-        // =========================
-        // SERVER ERROR
-        // =========================
-
         if(!response.ok){
 
             throw new Error(
@@ -173,10 +125,6 @@ document.getElementById("registerForm")
             );
 
         }
-
-        // =========================
-        // VALIDASI JSON
-        // =========================
 
         let data = null;
 
@@ -193,10 +141,6 @@ document.getElementById("registerForm")
 
         }
 
-        // =========================
-        // SUCCESS
-        // =========================
-
         if(data.status === "success"){
 
             document.getElementById(
@@ -206,10 +150,6 @@ document.getElementById("registerForm")
             alert(
                 "Register berhasil"
             );
-
-            // =========================
-            // PINDAH KE LOGIN SPA
-            // =========================
 
             showPage(
                 "loginPage"
@@ -236,10 +176,6 @@ document.getElementById("registerForm")
         );
 
     }finally{
-
-        // =========================
-        // ENABLE BUTTON
-        // =========================
 
         btn.disabled = false;
 

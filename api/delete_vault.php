@@ -7,10 +7,6 @@ header("Content-Type: application/json");
 include "../config/database.php";
 /** @var mysqli $conn */
 
-// =========================
-// CEK LOGIN
-// =========================
-
 if(
 
     !isset($_SESSION['user_id'])
@@ -30,16 +26,8 @@ if(
 
 }
 
-// =========================
-// USER LOGIN
-// =========================
-
 $user_id =
     (int) $_SESSION['user_id'];
-
-// =========================
-// AMBIL JSON INPUT
-// =========================
 
 $raw =
     file_get_contents(
@@ -60,10 +48,6 @@ if(!$raw){
     exit;
 
 }
-
-// =========================
-// DECODE JSON
-// =========================
 
 $data =
     json_decode(
@@ -86,10 +70,6 @@ if(!$data){
 
 }
 
-// =========================
-// VALIDASI ID
-// =========================
-
 if(!isset($data['id'])){
 
     echo json_encode([
@@ -105,18 +85,10 @@ if(!isset($data['id'])){
 
 }
 
-// =========================
-// AMBIL ID
-// =========================
-
 $id =
     intval(
         $data['id']
     );
-
-// =========================
-// VALIDASI ID
-// =========================
 
 if($id <= 0){
 
@@ -132,10 +104,6 @@ if($id <= 0){
     exit;
 
 }
-
-// =========================
-// CEK VAULT MILIK USER
-// =========================
 
 $check =
     mysqli_prepare(
@@ -184,10 +152,6 @@ $result =
         $check
     );
 
-// =========================
-// VAULT TIDAK ADA
-// =========================
-
 if(
 
     mysqli_num_rows($result)
@@ -209,10 +173,6 @@ if(
 }
 
 mysqli_stmt_close($check);
-
-// =========================
-// DELETE VAULT
-// =========================
 
 $stmt =
     mysqli_prepare(
@@ -240,10 +200,6 @@ if(!$stmt){
 
 }
 
-// =========================
-// BIND PARAM
-// =========================
-
 mysqli_stmt_bind_param(
 
     $stmt,
@@ -254,10 +210,6 @@ mysqli_stmt_bind_param(
     $user_id
 
 );
-
-// =========================
-// EXECUTE
-// =========================
 
 if(mysqli_stmt_execute($stmt)){
 
@@ -279,10 +231,6 @@ if(mysqli_stmt_execute($stmt)){
     ]);
 
 }
-
-// =========================
-// CLOSE
-// =========================
 
 mysqli_stmt_close($stmt);
 

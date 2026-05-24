@@ -7,10 +7,6 @@ header("Content-Type: application/json");
 include "../config/database.php";
 /** @var mysqli $conn */
 
-// =========================
-// CEK LOGIN
-// =========================
-
 if(
 
     !isset($_SESSION['user_id'])
@@ -30,18 +26,10 @@ if(
 
 }
 
-// =========================
-// USER LOGIN
-// =========================
-
 $user_id =
     intval(
         $_SESSION['user_id']
     );
-
-// =========================
-// VALIDASI PARAMETER
-// =========================
 
 if(!isset($_GET['id'])){
 
@@ -58,18 +46,10 @@ if(!isset($_GET['id'])){
 
 }
 
-// =========================
-// AMBIL ID
-// =========================
-
 $id =
     intval(
         $_GET['id']
     );
-
-// =========================
-// VALIDASI ID
-// =========================
 
 if($id <= 0){
 
@@ -85,10 +65,6 @@ if($id <= 0){
     exit;
 
 }
-
-// =========================
-// PREPARED STATEMENT
-// =========================
 
 $stmt =
     mysqli_prepare(
@@ -108,10 +84,6 @@ $stmt =
 
     );
 
-// =========================
-// PREPARE ERROR
-// =========================
-
 if(!$stmt){
 
     echo json_encode([
@@ -127,10 +99,6 @@ if(!$stmt){
 
 }
 
-// =========================
-// BIND PARAM
-// =========================
-
 mysqli_stmt_bind_param(
 
     $stmt,
@@ -142,10 +110,6 @@ mysqli_stmt_bind_param(
 
 );
 
-// =========================
-// EXECUTE
-// =========================
-
 mysqli_stmt_execute(
     $stmt
 );
@@ -154,10 +118,6 @@ $result =
     mysqli_stmt_get_result(
         $stmt
     );
-
-// =========================
-// VAULT TIDAK ADA
-// =========================
 
 if(
     mysqli_num_rows($result)
@@ -177,18 +137,10 @@ if(
 
 }
 
-// =========================
-// AMBIL DATA
-// =========================
-
 $data =
     mysqli_fetch_assoc(
         $result
     );
-
-// =========================
-// RESPONSE
-// =========================
 
 echo json_encode([
 
@@ -208,10 +160,6 @@ echo json_encode([
     ]
 
 ]);
-
-// =========================
-// CLOSE
-// =========================
 
 mysqli_stmt_close($stmt);
 

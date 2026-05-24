@@ -1,14 +1,8 @@
-// =========================
-// PASSWORD SCORE
-// =========================
-
 function getPasswordStrength(
     password
 ){
 
     let score = 0;
-
-    // panjang
 
     if(password.length >= 8){
 
@@ -22,15 +16,11 @@ function getPasswordStrength(
 
     }
 
-    // huruf kecil
-
     if(/[a-z]/.test(password)){
 
         score++;
 
     }
-
-    // huruf besar
 
     if(/[A-Z]/.test(password)){
 
@@ -38,25 +28,17 @@ function getPasswordStrength(
 
     }
 
-    // angka
-
     if(/\d/.test(password)){
 
         score++;
 
     }
 
-    // simbol
-
     if(/[^A-Za-z0-9]/.test(password)){
 
         score++;
 
     }
-
-    // =========================
-    // RESULT
-    // =========================
 
     if(score <= 2){
 
@@ -95,10 +77,6 @@ function getPasswordStrength(
 
 }
 
-// =========================
-// SHA-1
-// =========================
-
 async function sha1(text){
 
     const encoded =
@@ -129,36 +107,20 @@ async function sha1(text){
 
 }
 
-// =========================
-// HIBP CHECK
-// =========================
-
 async function checkPwnedPassword(
     password
 ){
 
     try{
 
-        // =========================
-        // HASH SHA1
-        // =========================
-
         const hash =
             await sha1(password);
-
-        // =========================
-        // PREFIX
-        // =========================
 
         const prefix =
             hash.substring(0,5);
 
         const suffix =
             hash.substring(5);
-
-        // =========================
-        // REQUEST
-        // =========================
 
         const response =
             await fetch(
@@ -181,10 +143,6 @@ async function checkPwnedPassword(
 
         const lines =
             text.split("\n");
-
-        // =========================
-        // MATCH
-        // =========================
 
         for(let line of lines){
 

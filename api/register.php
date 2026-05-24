@@ -14,17 +14,9 @@ header(
     "Pragma: no-cache"
 );
 
-// =========================
-// DATABASE
-// =========================
-
 include "../config/database.php";
 
 /** @var mysqli $conn */
-
-// =========================
-// RATE LIMIT
-// =========================
 
 if(
 
@@ -46,8 +38,6 @@ if(
 
 }
 
-// RESET 5 MENIT
-
 if(
 
     time() - $_SESSION['register_time']
@@ -60,8 +50,6 @@ if(
     $_SESSION['register_time'] = time();
 
 }
-
-// LIMIT
 
 if(
 
@@ -80,18 +68,10 @@ if(
 
 }
 
-// =========================
-// AMBIL JSON
-// =========================
-
 $raw =
     file_get_contents(
         "php://input"
     );
-
-// =========================
-// VALIDASI REQUEST
-// =========================
 
 if(!$raw){
 
@@ -105,19 +85,11 @@ if(!$raw){
 
 }
 
-// =========================
-// DECODE JSON
-// =========================
-
 $data =
     json_decode(
         $raw,
         true
     );
-
-// =========================
-// VALIDASI JSON
-// =========================
 
 if(
 
@@ -135,10 +107,6 @@ if(
     exit;
 
 }
-
-// =========================
-// INPUT
-// =========================
 
 $email =
     strtolower(
@@ -176,10 +144,6 @@ $iterations =
 
     );
 
-// =========================
-// VALIDASI EMPTY
-// =========================
-
 if(
 
     empty($email) ||
@@ -201,10 +165,6 @@ if(
     exit;
 
 }
-
-// =========================
-// VALIDASI EMAIL
-// =========================
 
 if(
 
@@ -228,10 +188,6 @@ if(
 
 }
 
-// =========================
-// VALIDASI ITERATIONS
-// =========================
-
 if(
 
     $iterations < 100000 ||
@@ -249,10 +205,6 @@ if(
     exit;
 
 }
-
-// =========================
-// VALIDASI BASE64
-// =========================
 
 if(
 
@@ -278,10 +230,6 @@ if(
 
 }
 
-// =========================
-// LIMIT SIZE
-// =========================
-
 if(
 
     strlen($verifier) > 500 ||
@@ -300,10 +248,6 @@ if(
 
 }
 
-// =========================
-// CHECK EMAIL
-// =========================
-
 $checkStmt =
     mysqli_prepare(
 
@@ -319,10 +263,6 @@ $checkStmt =
 
     );
 
-// =========================
-// PREPARE ERROR
-// =========================
-
 if(!$checkStmt){
 
     echo json_encode([
@@ -335,10 +275,6 @@ if(!$checkStmt){
 
 }
 
-// =========================
-// BIND
-// =========================
-
 mysqli_stmt_bind_param(
 
     $checkStmt,
@@ -349,26 +285,14 @@ mysqli_stmt_bind_param(
 
 );
 
-// =========================
-// EXECUTE
-// =========================
-
 mysqli_stmt_execute(
     $checkStmt
 );
-
-// =========================
-// RESULT
-// =========================
 
 $checkResult =
     mysqli_stmt_get_result(
         $checkStmt
     );
-
-// =========================
-// EMAIL EXISTS
-// =========================
 
 if(
 
@@ -398,10 +322,6 @@ mysqli_stmt_close(
     $checkStmt
 );
 
-// =========================
-// INSERT USER
-// =========================
-
 $insertStmt =
     mysqli_prepare(
 
@@ -424,10 +344,6 @@ $insertStmt =
 
     );
 
-// =========================
-// PREPARE ERROR
-// =========================
-
 if(!$insertStmt){
 
     echo json_encode([
@@ -439,10 +355,6 @@ if(!$insertStmt){
     exit;
 
 }
-
-// =========================
-// BIND PARAM
-// =========================
 
 mysqli_stmt_bind_param(
 
@@ -456,10 +368,6 @@ mysqli_stmt_bind_param(
     $iterations
 
 );
-
-// =========================
-// EXECUTE
-// =========================
 
 if(
 
@@ -486,10 +394,6 @@ if(
     ]);
 
 }
-
-// =========================
-// CLOSE
-// =========================
 
 mysqli_stmt_close(
     $insertStmt

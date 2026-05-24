@@ -1,12 +1,4 @@
-// =========================
-// SAVE VAULT
-// =========================
-
 async function saveVault(){
-
-    // =========================
-    // BUTTON
-    // =========================
 
     const btn =
         document.getElementById(
@@ -23,10 +15,6 @@ async function saveVault(){
 
     }
 
-    // =========================
-    // CEGAH DOUBLE CLICK
-    // =========================
-
     if(btn.disabled){
 
         return;
@@ -39,10 +27,6 @@ async function saveVault(){
         "Menyimpan...";
 
     try{
-
-        // =========================
-        // INPUT ELEMENT
-        // =========================
 
         const serviceInput =
             document.getElementById(
@@ -64,10 +48,6 @@ async function saveVault(){
                 "note"
             );
 
-        // =========================
-        // VALIDASI ELEMENT
-        // =========================
-
         if(
 
             !serviceInput ||
@@ -82,10 +62,6 @@ async function saveVault(){
             );
 
         }
-
-        // =========================
-        // AMBIL VALUE
-        // =========================
 
         const service =
             serviceInput.value
@@ -102,10 +78,6 @@ async function saveVault(){
             noteInput.value
             .trim();
 
-        // =========================
-        // VALIDASI INPUT
-        // =========================
-
         if(
 
             !service ||
@@ -121,10 +93,6 @@ async function saveVault(){
             return;
 
         }
-
-        // =========================
-        // VALIDASI LOGIN
-        // =========================
 
         const user_id =
             sessionStorage.getItem(
@@ -145,10 +113,6 @@ async function saveVault(){
 
         }
 
-        // =========================
-        // VALIDASI AES KEY
-        // =========================
-
         try{
 
             await getAESKey();
@@ -164,10 +128,6 @@ async function saveVault(){
             return;
 
         }
-
-        // =========================
-        // DATA VAULT
-        // =========================
 
         const vaultData = {
 
@@ -185,18 +145,10 @@ async function saveVault(){
 
         };
 
-        // =========================
-        // ENCRYPT DATA
-        // =========================
-
         const encrypted =
             await encryptData(
                 vaultData
             );
-
-        // =========================
-        // REQUEST SAVE
-        // =========================
 
         const response =
             await fetch(
@@ -226,10 +178,6 @@ async function saveVault(){
 
             );
 
-        // =========================
-        // SERVER ERROR
-        // =========================
-
         if(!response.ok){
 
             throw new Error(
@@ -238,16 +186,8 @@ async function saveVault(){
 
         }
 
-        // =========================
-        // JSON RESPONSE
-        // =========================
-
         const result =
             await response.json();
-
-        // =========================
-        // SUCCESS
-        // =========================
 
         if(
             result.status ===
@@ -258,10 +198,6 @@ async function saveVault(){
                 "Vault berhasil disimpan"
             );
 
-            // =========================
-            // RESET FORM
-            // =========================
-
             serviceInput.value = "";
 
             usernameInput.value = "";
@@ -270,17 +206,9 @@ async function saveVault(){
 
             noteInput.value = "";
 
-            // =========================
-            // KEMBALI DASHBOARD
-            // =========================
-
             showPage(
                 "dashboardPage"
             );
-
-            // =========================
-            // RELOAD VAULT
-            // =========================
 
             if(
                 typeof loadVault ===
@@ -315,10 +243,6 @@ async function saveVault(){
         );
 
     }finally{
-
-        // =========================
-        // ENABLE BUTTON
-        // =========================
 
         btn.disabled = false;
 
