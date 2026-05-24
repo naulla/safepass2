@@ -1,12 +1,4 @@
-// =========================
-// CURRENT VAULT ID
-// =========================
-
 let currentVaultId = null;
-
-// =========================
-// OPEN EDIT PAGE
-// =========================
 
 async function openEdit(id){
 
@@ -19,10 +11,6 @@ async function openEdit(id){
     await loadSingleVault();
 
 }
-
-// =========================
-// LOAD SINGLE VAULT
-// =========================
 
 async function loadSingleVault(){
 
@@ -112,10 +100,6 @@ async function loadSingleVault(){
             decrypted
         );
 
-        // =========================
-        // SET FORM
-        // =========================
-
         document.getElementById(
             "editService"
         ).value =
@@ -146,10 +130,6 @@ async function loadSingleVault(){
     }
 
 }
-
-// =========================
-// UPDATE VAULT
-// =========================
 
 async function updateVault(){
 

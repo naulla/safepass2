@@ -1,21 +1,9 @@
-// =========================
-// EXPORT ENCRYPTED BACKUP
-// =========================
-
 async function exportEncryptedBackup(){
 
     try{
 
-        // =========================
-        // GET VAULT
-        // =========================
-
         const vaults =
             await getVaults();
-
-        // =========================
-        // VALIDASI
-        // =========================
 
         if(vaults.length === 0){
 
@@ -26,10 +14,6 @@ async function exportEncryptedBackup(){
             return;
 
         }
-
-        // =========================
-        // BACKUP OBJECT
-        // =========================
 
         const backup = {
 
@@ -56,10 +40,6 @@ async function exportEncryptedBackup(){
 
         };
 
-        // =========================
-        // JSON
-        // =========================
-
         const json =
             JSON.stringify(
 
@@ -70,10 +50,6 @@ async function exportEncryptedBackup(){
                 2
 
             );
-
-        // =========================
-        // DOWNLOAD
-        // =========================
 
         downloadBackup(
 
@@ -95,19 +71,11 @@ async function exportEncryptedBackup(){
 
 }
 
-// =========================
-// IMPORT ENCRYPTED BACKUP
-// =========================
-
 async function importEncryptedBackup(
     event
 ){
 
     try{
-
-        // =========================
-        // FILE
-        // =========================
 
         const file =
             event.target.files[0];
@@ -118,23 +86,11 @@ async function importEncryptedBackup(
 
         }
 
-        // =========================
-        // READ FILE
-        // =========================
-
         const text =
             await file.text();
 
-        // =========================
-        // PARSE JSON
-        // =========================
-
         const backup =
             JSON.parse(text);
-
-        // =========================
-        // VALIDASI TYPE
-        // =========================
 
         if(
 
@@ -148,10 +104,6 @@ async function importEncryptedBackup(
             );
 
         }
-
-        // =========================
-        // VALIDASI VAULT
-        // =========================
 
         if(
 
@@ -167,20 +119,12 @@ async function importEncryptedBackup(
 
         }
 
-        // =========================
-        // LOOP IMPORT
-        // =========================
-
         for(
 
             let vault of
             backup.vaults
 
         ){
-
-            // =========================
-            // VALIDASI FIELD
-            // =========================
 
             if(
 
@@ -193,10 +137,6 @@ async function importEncryptedBackup(
                 continue;
 
             }
-
-            // =========================
-            // IMPORT
-            // =========================
 
             const response =
                 await fetch(
@@ -230,10 +170,6 @@ async function importEncryptedBackup(
                     }
 
                 );
-
-            // =========================
-            // SERVER ERROR
-            // =========================
 
             if(!response.ok){
 
@@ -283,10 +219,6 @@ async function importEncryptedBackup(
 
         }
 
-        // =========================
-        // SUCCESS
-        // =========================
-
         alert(
             "Backup berhasil diimport"
         );
@@ -304,10 +236,6 @@ async function importEncryptedBackup(
     }
 
 }
-
-// =========================
-// DOWNLOAD BACKUP
-// =========================
 
 function downloadBackup(
 

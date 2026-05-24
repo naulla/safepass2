@@ -1,9 +1,3 @@
-// =========================
-// vault-api.js
-// =========================
-
-// GET VAULTS
-
 async function getVaults(){
 
     const user_id =
@@ -77,8 +71,6 @@ async function getVaults(){
     return vaults;
 
 }
-
-// DELETE VAULT
 
 async function deleteVaultApi(id){
 

@@ -18,10 +18,6 @@
 
 <style>
 
-/* ========================= */
-/* RESET */
-/* ========================= */
-
 *{
     margin:0;
     padding:0;
@@ -38,28 +34,16 @@ body{
     overflow-x:hidden;
 }
 
-/* ========================= */
-/* PAGE */
-/* ========================= */
-
 .page{
     width:100%;
     min-height:100vh;
 }
-
-/* ========================= */
-/* CONTAINER */
-/* ========================= */
 
 .container{
     width:100%;
     min-height:100vh;
     padding:20px;
 }
-
-/* ========================= */
-/* TOPBAR */
-/* ========================= */
 
 .topbar{
     width:100%;
@@ -82,19 +66,11 @@ body{
     font-size:14px;
 }
 
-/* ========================= */
-/* ACTION GROUP */
-/* ========================= */
-
 .action-group{
     display:flex;
     gap:10px;
     flex-wrap:wrap;
 }
-
-/* ========================= */
-/* BUTTON */
-/* ========================= */
 
 button{
     border:none;
@@ -135,10 +111,6 @@ button:hover{
     color:white;
 }
 
-/* ========================= */
-/* TABLE */
-/* ========================= */
-
 .table-container{
     width:100%;
     overflow-x:auto;
@@ -169,10 +141,6 @@ td{
 tr:hover{
     background:#111c2e;
 }
-
-/* ========================= */
-/* FORM */
-/* ========================= */
 
 .form-wrapper{
     width:100%;
@@ -217,10 +185,6 @@ textarea{
     resize:none;
 }
 
-/* ========================= */
-/* PASSWORD WRAPPER */
-/* ========================= */
-
 .password-wrapper{
     position:relative;
     width:100%;
@@ -245,10 +209,6 @@ textarea{
     color:white;
 }
 
-/* ========================= */
-/* GENERATOR */
-/* ========================= */
-
 .generator-box{
     margin-top:15px;
     padding:12px;
@@ -259,10 +219,6 @@ textarea{
 .checkbox-group{
     margin-top:6px;
 }
-
-/* ========================= */
-/* AUTH PAGE */
-/* ========================= */
 
 .auth-container{
     width:100%;
@@ -363,10 +319,6 @@ textarea{
 
 }
 
-/* ========================= */
-/* RESPONSIVE */
-/* ========================= */
-
 @media(max-width:768px){
 
     .topbar{
@@ -439,10 +391,6 @@ textarea{
 </head>
 
 <body>
-
-<!-- ========================= -->
-<!-- DASHBOARD PAGE -->
-<!-- ========================= -->
 
 <section
     id="dashboardPage"
@@ -521,8 +469,6 @@ textarea{
 
         </div>
 
-        <!-- SEARCH & FILTER -->
-
         <div class="vault-tools">
 
             <input
@@ -586,10 +532,6 @@ textarea{
     </div>
 
 </section>
-
-<!-- ========================= -->
-<!-- ADD PAGE -->
-<!-- ========================= -->
 
 <section
     id="addPage"
@@ -784,10 +726,6 @@ textarea{
 
 </section>
 
-<!-- ========================= -->
-<!-- EDIT PAGE -->
-<!-- ========================= -->
-
 <section
     id="editPage"
     class="page"
@@ -950,8 +888,6 @@ textarea{
                 placeholder="Catatan tambahan"
             ></textarea>
 
-            <!-- BUTTON -->
-
             <div class="action-group">
 
                 <button
@@ -980,10 +916,6 @@ textarea{
     </div>
 
 </section>
-
-<!-- ========================= -->
-<!-- LOGIN PAGE -->
-<!-- ========================= -->
 
 <section
     id="loginPage"
@@ -1066,10 +998,6 @@ textarea{
     </div>
 
 </section>
-
-<!-- ========================= -->
-<!-- REGISTER PAGE -->
-<!-- ========================= -->
 
 <section
     id="registerPage"
@@ -1154,10 +1082,6 @@ textarea{
 
 </section>
 
-<!-- ========================= -->
-<!-- ROUTER -->
-<!-- ========================= -->
-
 <script>
 
 function showPage(pageId){
@@ -1179,10 +1103,6 @@ function showPage(pageId){
 }
 
 </script>
-
-<!-- ========================= -->
-<!-- TOGGLE PASSWORD -->
-<!-- ========================= -->
 
 <script>
 
@@ -1208,13 +1128,6 @@ function togglePassword(id){
 
 </script>
 
-
-<!-- ========================= -->
-<!-- SCRIPT -->
-<!-- ========================= -->
-
-
-
 <script src="assets/js/auto-logout.js"></script>
 
 <script src="assets/js/crypto.js"></script>
@@ -1238,10 +1151,6 @@ function togglePassword(id){
 <script src="assets/js/login.js"></script>
 
 <script src="assets/js/auth.js"></script>
-
-<!-- ========================= -->
-<!-- LOAD VAULT -->
-<!-- ========================= -->
 
 <script>
 

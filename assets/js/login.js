@@ -1,7 +1,3 @@
-// =========================
-// LOGIN FORM
-// =========================
-
 document.getElementById("loginForm")
 .addEventListener("submit", async function(e){
 
@@ -11,10 +7,6 @@ document.getElementById("loginForm")
         document.getElementById(
             "loginBtn"
         );
-
-    // =========================
-    // CEGAH SPAM KLIK
-    // =========================
 
     if(btn.disabled){
 
@@ -27,10 +19,6 @@ document.getElementById("loginForm")
     btn.innerText = "Loading...";
 
     try{
-
-        // =========================
-        // INPUT
-        // =========================
 
         const email =
             document.getElementById(
@@ -46,10 +34,6 @@ document.getElementById("loginForm")
             )
             .value;
 
-        // =========================
-        // VALIDASI
-        // =========================
-
         if(!email || !password){
 
             alert(
@@ -59,10 +43,6 @@ document.getElementById("loginForm")
             return;
 
         }
-
-        // =========================
-        // AMBIL LOGIN DATA
-        // =========================
 
         const response =
             await fetch(
@@ -88,10 +68,6 @@ document.getElementById("loginForm")
 
             );
 
-        // =========================
-        // SERVER ERROR
-        // =========================
-
         if(!response.ok){
 
             throw new Error(
@@ -102,10 +78,6 @@ document.getElementById("loginForm")
 
         const result =
             await response.json();
-
-        // =========================
-        // USER TIDAK ADA
-        // =========================
 
         if(
             result.status !==
@@ -120,25 +92,13 @@ document.getElementById("loginForm")
 
         }
 
-        // =========================
-        // USER DATA
-        // =========================
-
         const user =
             result.data;
-
-        // =========================
-        // SALT
-        // =========================
 
         const salt =
             base64ToBuf(
                 user.salt
             );
-
-        // =========================
-        // GENERATE VERIFIER
-        // =========================
 
         const verifier =
             await generateVerifier(
@@ -150,10 +110,6 @@ document.getElementById("loginForm")
                 user.iterations
 
             );
-
-        // =========================
-        // VERIFY LOGIN
-        // =========================
 
         const verifyResponse =
             await fetch(
@@ -181,10 +137,6 @@ document.getElementById("loginForm")
 
             );
 
-        // =========================
-        // VERIFY ERROR
-        // =========================
-
         if(!verifyResponse.ok){
 
             throw new Error(
@@ -195,10 +147,6 @@ document.getElementById("loginForm")
 
         const verifyResult =
             await verifyResponse.json();
-
-        // =========================
-        // PASSWORD SALAH
-        // =========================
 
         if(
             verifyResult.status !==
@@ -217,7 +165,7 @@ document.getElementById("loginForm")
         // DERIVE AES KEY
         // =========================
 
-        const key = 
+        const key =
             await deriveKey(
 
                 password,
@@ -228,23 +176,11 @@ document.getElementById("loginForm")
 
             );
 
-        // =========================
-        // SAVE AES KEY
-        // =========================
-
         setAESKey(key);
-
-        // =========================
-        // CLEAR PASSWORD
-        // =========================
 
         document.getElementById(
             "loginPassword"
         ).value = "";
-
-        // =========================
-        // SESSION
-        // =========================
 
         sessionStorage.setItem(
 
@@ -262,17 +198,9 @@ document.getElementById("loginForm")
 
         );
 
-        // =========================
-        // SHOW DASHBOARD SPA
-        // =========================
-
         showPage(
             "dashboardPage"
         );
-
-        // =========================
-        // LOAD VAULT
-        // =========================
 
         if(
             typeof loadVault ===

@@ -1,9 +1,5 @@
 <?php
 
-// =========================
-// SESSION COOKIE SECURITY
-// =========================
-
 session_set_cookie_params([
 
     "lifetime" => 0,
@@ -18,19 +14,11 @@ session_set_cookie_params([
 
 ]);
 
-// =========================
-// START SESSION
-// =========================
-
 if(session_status() === PHP_SESSION_NONE){
 
     session_start();
 
 }
-
-// =========================
-// SECURITY HEADERS
-// =========================
 
 header("X-Frame-Options: DENY");
 

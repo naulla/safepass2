@@ -1,11 +1,3 @@
-// =========================
-// vault-ui.js
-// =========================
-
-// =========================
-// LOADING
-// =========================
-
 function showLoading(vaultList){
 
     vaultList.innerHTML = "";
@@ -33,10 +25,6 @@ function showLoading(vaultList){
 
 }
 
-// =========================
-// EMPTY STATE
-// =========================
-
 function showEmptyState(vaultList){
 
     vaultList.innerHTML = "";
@@ -63,10 +51,6 @@ function showEmptyState(vaultList){
     vaultList.appendChild(row);
 
 }
-
-// =========================
-// ERROR STATE
-// =========================
 
 function showErrorState(
     vaultList,
@@ -101,10 +85,6 @@ function showErrorState(
 
 }
 
-// =========================
-// CREATE VAULT ROW
-// =========================
-
 async function createVaultRow(
     vault,
     vaultList
@@ -128,10 +108,6 @@ async function createVaultRow(
     const tr =
         document.createElement("tr");
 
-    // =========================
-    // SERVICE
-    // =========================
-
     const tdService =
         document.createElement("td");
 
@@ -146,19 +122,11 @@ async function createVaultRow(
 
     tdService.appendChild(badge);
 
-    // =========================
-    // USERNAME
-    // =========================
-
     const tdUsername =
         document.createElement("td");
 
     tdUsername.textContent =
         decrypted.username;
-
-    // =========================
-    // PASSWORD
-    // =========================
 
     const tdPassword =
         document.createElement("td");
@@ -184,10 +152,6 @@ async function createVaultRow(
     passInput.readOnly =
         true;
 
-    // =========================
-    // TOGGLE BUTTON
-    // =========================
-
     const toggleBtn =
         document.createElement("button");
 
@@ -207,10 +171,6 @@ async function createVaultRow(
 
         }
     );
-
-    // =========================
-    // COPY BUTTON
-    // =========================
 
     const copyBtn =
         document.createElement("button");
@@ -248,10 +208,6 @@ async function createVaultRow(
         passWrapper
     );
 
-    // =========================
-    // STATUS
-    // =========================
-
     const tdStatus =
         document.createElement("td");
 
@@ -269,10 +225,6 @@ async function createVaultRow(
 
     statusBadge.textContent =
         strength.label;
-
-    // =========================
-    // HIBP CHECK
-    // =========================
 
     checkPwnedPassword(
         decrypted.password
@@ -294,19 +246,11 @@ async function createVaultRow(
         statusBadge
     );
 
-    // =========================
-    // NOTE
-    // =========================
-
     const tdNote =
         document.createElement("td");
 
     tdNote.textContent =
         decrypted.note || "-";
-
-    // =========================
-    // ACTION
-    // =========================
 
     const tdAction =
         document.createElement("td");
@@ -316,8 +260,6 @@ async function createVaultRow(
 
     actionGroup.className =
         "action-group";
-
-    // EDIT
 
     const editBtn =
         document.createElement("button");
@@ -336,7 +278,6 @@ async function createVaultRow(
 
         }
     );
-    // DELETE
 
     const deleteBtn =
         document.createElement("button");
@@ -370,10 +311,6 @@ async function createVaultRow(
         actionGroup
     );
 
-    // =========================
-    // APPEND
-    // =========================
-
     tr.appendChild(tdService);
 
     tr.appendChild(tdUsername);
@@ -389,10 +326,6 @@ async function createVaultRow(
     vaultList.appendChild(tr);
 
 }
-
-// =========================
-// TOGGLE VAULT PASSWORD
-// =========================
 
 function toggleVaultPassword(id){
 
@@ -423,10 +356,6 @@ function toggleVaultPassword(id){
     }
 
 }
-
-// =========================
-// COPY PASSWORD
-// =========================
 
 async function copyPassword(password){
 

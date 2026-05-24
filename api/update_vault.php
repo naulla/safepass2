@@ -8,10 +8,6 @@ include "../config/database.php";
 
 /** @var mysqli $conn */
 
-// =========================
-// CEK LOGIN
-// =========================
-
 if(
 
     !isset($_SESSION['user_id'])
@@ -33,16 +29,8 @@ if(
 
 }
 
-// =========================
-// USER LOGIN
-// =========================
-
 $user_id =
     (int)$_SESSION['user_id'];
-
-// =========================
-// AMBIL JSON INPUT
-// =========================
 
 $raw =
     file_get_contents(
@@ -63,10 +51,6 @@ if(!$raw){
     exit;
 
 }
-
-// =========================
-// DECODE JSON
-// =========================
 
 $data =
     json_decode(
@@ -94,10 +78,6 @@ if(
 
 }
 
-// =========================
-// VALIDASI FIELD
-// =========================
-
 if(
 
     !isset($data['id']) ||
@@ -123,10 +103,6 @@ if(
 
 }
 
-// =========================
-// AMBIL DATA
-// =========================
-
 $id =
     (int)$data['id'];
 
@@ -139,10 +115,6 @@ $iv =
     trim(
         $data['encrypted_data']['iv']
     );
-
-// =========================
-// VALIDASI EMPTY
-// =========================
 
 if(
 
@@ -166,10 +138,6 @@ if(
     exit;
 
 }
-
-// =========================
-// VALIDASI BASE64
-// =========================
 
 if(
 
@@ -197,10 +165,6 @@ if(
     exit;
 
 }
-
-// =========================
-// CEK VAULT & OWNER
-// =========================
 
 $check =
     mysqli_prepare(
@@ -233,10 +197,6 @@ if(!$check){
 
 }
 
-// =========================
-// BIND PARAM
-// =========================
-
 mysqli_stmt_bind_param(
 
     $check,
@@ -248,10 +208,6 @@ mysqli_stmt_bind_param(
 
 );
 
-// =========================
-// EXECUTE
-// =========================
-
 mysqli_stmt_execute(
     $check
 );
@@ -260,10 +216,6 @@ $result =
     mysqli_stmt_get_result(
         $check
     );
-
-// =========================
-// VALIDASI OWNER
-// =========================
 
 if(
 
@@ -288,10 +240,6 @@ if(
 mysqli_stmt_close(
     $check
 );
-
-// =========================
-// UPDATE VAULT
-// =========================
 
 $stmt =
     mysqli_prepare(
@@ -327,10 +275,6 @@ if(!$stmt){
 
 }
 
-// =========================
-// BIND UPDATE
-// =========================
-
 mysqli_stmt_bind_param(
 
     $stmt,
@@ -343,10 +287,6 @@ mysqli_stmt_bind_param(
     $user_id
 
 );
-
-// =========================
-// EXECUTE UPDATE
-// =========================
 
 if(
 
@@ -372,10 +312,6 @@ if(
     ]);
 
 }
-
-// =========================
-// CLOSE
-// =========================
 
 mysqli_stmt_close($stmt);
 

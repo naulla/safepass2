@@ -1,14 +1,6 @@
-// =========================
-// dashboard.js
-// =========================
-
 let isLoadingVault = false;
 
 let allVaults = [];
-
-// =========================
-// GET VAULTS
-// =========================
 
 async function getVaults(){
 
@@ -68,10 +60,6 @@ async function getVaults(){
 
 }
 
-// =========================
-// DELETE VAULT API
-// =========================
-
 async function deleteVaultApi(id){
 
     const response =
@@ -103,10 +91,6 @@ async function deleteVaultApi(id){
 
 }
 
-// =========================
-// LOAD VAULT
-// =========================
-
 async function loadVault(){
 
     if(isLoadingVault){
@@ -134,17 +118,9 @@ async function loadVault(){
 
         }
 
-        // =========================
-        // SHOW LOADING
-        // =========================
-
         showLoading(
             vaultList
         );
-
-        // =========================
-        // LOAD AES KEY
-        // =========================
 
         try{
 
@@ -166,20 +142,12 @@ async function loadVault(){
 
         }
 
-        // =========================
-        // GET DATA
-        // =========================
-
         const vaults =
             await getVaults();
 
         allVaults = vaults;
 
         populateServiceFilter(vaults);
-
-        // =========================
-        // EMPTY STATE
-        // =========================
 
         if(vaults.length === 0){
 
@@ -191,15 +159,7 @@ async function loadVault(){
 
         }
 
-        // =========================
-        // CLEAR TABLE
-        // =========================
-
         vaultList.innerHTML = "";
-
-        // =========================
-        // RENDER ROW
-        // =========================
 
         for(
             const vault
@@ -223,10 +183,6 @@ async function loadVault(){
             }
 
         }
-
-        // =========================
-        // CHECK IF FAILED
-        // =========================
 
         if(
             vaultList.innerHTML
@@ -259,10 +215,6 @@ async function loadVault(){
     }
 
 }
-
-// =========================
-// DELETE VAULT
-// =========================
 
 async function deleteVault(id){
 
@@ -316,10 +268,6 @@ async function deleteVault(id){
 
 }
 
-// =========================
-// OPEN EDIT PAGE
-// =========================
-
 function openEdit(id){
 
     sessionStorage.setItem(
@@ -342,10 +290,6 @@ function openEdit(id){
 
 }
 
-// =========================
-// LOGOUT
-// =========================
-
 function logout(){
 
     clearCryptoCache();
@@ -357,10 +301,6 @@ function logout(){
     );
 
 }
-
-// =========================
-// AUTO LOAD
-// =========================
 
 window.addEventListener(
 
@@ -391,10 +331,6 @@ window.addEventListener(
     }
 
 );
-
-// =========================
-// SEARCH + FILTER
-// =========================
 
 async function filterVaults(){
 
@@ -443,8 +379,6 @@ async function filterVaults(){
                     decrypted.password
                 );
 
-            // SEARCH
-
             const matchSearch =
 
             decrypted.service
@@ -465,7 +399,6 @@ async function filterVaults(){
             .toLowerCase()
             .includes(search);
 
-            // FILTER
             let matchFilter =
                 true;
 
@@ -479,8 +412,6 @@ async function filterVaults(){
                     filter;
 
             }
-
-            // SHOW
 
             if(
                 matchSearch &&
@@ -502,8 +433,6 @@ async function filterVaults(){
 
     }
 
-    // EMPTY
-
     if(
         vaultList.innerHTML
         .trim() === ""
@@ -518,10 +447,6 @@ async function filterVaults(){
 
 }
 
-// =========================
-// POPULATE SERVICE FILTER
-// =========================
-
 async function populateServiceFilter(vaults){
 
     const select =
@@ -534,8 +459,6 @@ async function populateServiceFilter(vaults){
         return;
 
     }
-
-    // RESET
 
     select.innerHTML = `
 
@@ -584,8 +507,6 @@ async function populateServiceFilter(vaults){
 
     }
 
-    // APPEND OPTION
-
     services.forEach(service => {
 
         const option =
@@ -606,10 +527,6 @@ async function populateServiceFilter(vaults){
     });
 
 }
-
-// =========================
-// EVENT SEARCH FILTER
-// =========================
 
 window.addEventListener(
 
