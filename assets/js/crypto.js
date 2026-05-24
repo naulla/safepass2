@@ -3,7 +3,7 @@
 // =========================
 
 const PBKDF2_ITERATIONS =
-    310000;
+    600000;
 
 // =========================
 // AES KEY CACHE (RAM ONLY)
@@ -264,7 +264,6 @@ async function deriveKey(
 
 // =========================
 // SAVE AES KEY
-// RAM ONLY
 // =========================
 
 async function saveAESKey(key){

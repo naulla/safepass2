@@ -92,12 +92,11 @@ async function saveVault(){
             .trim();
 
         const username =
-            usernameInput.value
+            usernameInput.value     
             .trim();
 
         const passwordField =
-            passwordInput.value
-            .trim();
+            passwordInput.value;
 
         const note =
             noteInput.value

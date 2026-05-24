@@ -456,7 +456,7 @@ textarea{
             <div>
 
                 <h2>
-                    🔐 My Vault
+                    My Vault
                 </h2>
 
                 <p>
@@ -602,7 +602,7 @@ textarea{
         <div class="form-box">
 
             <h2>
-                🔐 Tambah Password
+                Tambah Password
             </h2>
 
             <label>
@@ -799,7 +799,7 @@ textarea{
         <div class="form-box">
 
             <h2>
-                ✏️ Edit Vault
+                Edit Vault
             </h2>
 
             <label>
@@ -999,7 +999,7 @@ textarea{
             </div>
 
             <h1 class="auth-title">
-                SafePass
+                ReKey
             </h1>
 
             <p class="auth-subtitle">
