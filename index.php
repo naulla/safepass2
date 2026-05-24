@@ -335,7 +335,6 @@ textarea{
     }
 
 }
-
 .password-field{
     display:flex;
     align-items:center;
@@ -387,7 +386,6 @@ textarea{
     background:#7f1d1d;
     color:white;
 }
-
 </style>
 
 </head>
@@ -534,3 +532,666 @@ textarea{
     </div>
 
 </section>
+
+<section
+    id="addPage"
+    class="page"
+    style="display:none;"
+>
+
+    <div class="form-wrapper">
+
+        <div class="form-box">
+
+            <h2>
+                Tambah Password
+            </h2>
+
+            <label>
+                Service
+            </label>
+
+            <input
+                type="text"
+                id="service"
+                placeholder="Contoh: Gmail"
+            >
+
+            <label>
+                Username
+            </label>
+
+            <input
+                type="text"
+                id="username"
+                placeholder="Username / Email"
+            >
+
+            <label>
+                Password
+            </label>
+
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                >
+
+                <span
+                    class="eye-icon"
+                    onclick="
+                        togglePassword(
+                            'password'
+                        )
+                    "
+                >
+                    👁
+                </span>
+
+            </div>
+
+            <!-- GENERATOR -->
+
+            <div class="generator-box">
+
+                <h3>
+                    Password Generator
+                </h3>
+
+                <label>
+                    Panjang Password
+                </label>
+
+                <input
+                    type="number"
+                    id="passwordLength"
+                    value="12"
+                    min="4"
+                    max="50"
+                >
+
+                <div class="checkbox-group">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="uppercase"
+                            checked
+                        >
+
+                        Huruf Besar
+
+                    </label>
+
+                </div>
+
+                <div class="checkbox-group">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="lowercase"
+                            checked
+                        >
+
+                        Huruf Kecil
+
+                    </label>
+
+                </div>
+
+                <div class="checkbox-group">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="numbers"
+                            checked
+                        >
+
+                        Angka
+
+                    </label>
+
+                </div>
+
+                <div class="checkbox-group">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="symbols"
+                        >
+
+                        Simbol
+
+                    </label>
+
+                </div>
+
+                <button
+                    class="btn-purple"
+                    onclick="
+                        generatePassword()
+                    "
+                >
+                    Generate Password
+                </button>
+
+            </div>
+
+            <label>
+                Catatan
+            </label>
+
+            <textarea
+                id="note"
+                placeholder="Catatan tambahan"
+            ></textarea>
+
+            <!-- BUTTON -->
+
+            <div class="action-group">
+
+                <button
+                    id="saveBtn"
+                    class="btn-success"
+                    onclick="saveVault()"
+                >
+                    Simpan
+                </button>
+
+                <button
+                    class="btn-secondary"
+                    onclick="
+                        showPage(
+                            'dashboardPage'
+                        )
+                    "
+                >
+                    Kembali
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section
+    id="editPage"
+    class="page"
+    style="display:none;"
+>
+
+    <div class="form-wrapper">
+
+        <div class="form-box">
+
+            <h2>
+                Edit Vault
+            </h2>
+
+            <label>
+                Service
+            </label>
+
+            <input
+                type="text"
+                id="editService"
+                placeholder="Contoh: Gmail"
+            >
+
+            <label>
+                Username / Email
+            </label>
+
+            <input
+                type="text"
+                id="editUsername"
+                placeholder="Masukkan username"
+            >
+
+            <label>
+                Password
+            </label>
+
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    id="editPassword"
+                    placeholder="Masukkan password"
+                >
+
+                <span
+                    class="eye-icon"
+                    onclick="
+                        togglePassword(
+                            'editPassword'
+                        )
+                    "
+                >
+                    👁
+                </span>
+
+            </div>
+
+            <!-- GENERATOR -->
+
+            <div class="generator-box">
+
+                <h3>
+                    Password Generator
+                </h3>
+
+                <label>
+                    Panjang Password
+                </label>
+
+                <input
+                    type="number"
+                    id="editPasswordLength"
+                    value="12"
+                    min="4"
+                    max="50"
+                >
+
+                <div class="checkbox-group">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="editUppercase"
+                            checked
+                        >
+
+                        Huruf Besar
+
+                    </label>
+
+                </div>
+
+                <div class="checkbox-group">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="editLowercase"
+                            checked
+                        >
+
+                        Huruf Kecil
+
+                    </label>
+
+                </div>
+
+                <div class="checkbox-group">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="editNumbers"
+                            checked
+                        >
+
+                        Angka
+
+                    </label>
+
+                </div>
+
+                <div class="checkbox-group">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="editSymbols"
+                        >
+
+                        Simbol
+
+                    </label>
+
+                </div>
+
+                <button
+                    class="btn-purple"
+                    onclick="
+                        generatePassword(true)
+                    "
+                >
+                    Generate Password
+                </button>
+
+            </div>
+
+            <label>
+                Catatan
+            </label>
+
+            <textarea
+                id="editNote"
+                placeholder="Catatan tambahan"
+            ></textarea>
+
+            <div class="action-group">
+
+                <button
+                    id="updateBtn"
+                    class="btn-success"
+                    onclick="updateVault()"
+                >
+                    Update Vault
+                </button>
+
+                <button
+                    class="btn-secondary"
+                    onclick="
+                        showPage(
+                            'dashboardPage'
+                        )
+                    "
+                >
+                    Kembali
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section
+    id="loginPage"
+    class="page"
+>
+
+    <div class="auth-container">
+
+        <div class="auth-card">
+
+            <div class="logo login-logo">
+                🔐
+            </div>
+
+            <h1 class="auth-title">
+                ReKey
+            </h1>
+
+            <p class="auth-subtitle">
+                Simpan password dengan aman dan terenkripsi
+            </p>
+
+            <form id="loginForm">
+
+                <div>
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        placeholder="Masukkan email"
+                        required
+                    >
+
+                </div>
+
+                <div>
+
+                    <label>
+                        Master Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Masukkan master password"
+                        required
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                    id="loginBtn"
+                >
+                    Login
+                </button>
+
+            </form>
+
+            <br>
+
+            <div class="center">
+
+                <a
+                    href="#"
+                    onclick="
+                        showPage(
+                            'registerPage'
+                        )
+                    "
+                >
+                    Belum punya akun? Register
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section
+    id="registerPage"
+    class="page"
+    style="display:none;"
+>
+
+    <div class="auth-container">
+
+        <div class="auth-card">
+
+            <div class="logo register-logo">
+                🛡️
+            </div>
+
+            <h1 class="auth-title">
+                Create Account
+            </h1>
+
+            <p class="auth-subtitle">
+                Buat akun vault baru dengan keamanan maksimal
+            </p>
+
+            <form id="registerForm">
+
+                <div>
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="registerEmail"
+                        placeholder="Masukkan email"
+                        required
+                    >
+
+                </div>
+
+                <div>
+
+                    <label>
+                        Master Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="registerPassword"
+                        placeholder="Masukkan master password"
+                        required
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                    id="registerBtn"
+                >
+                    Register
+                </button>
+
+            </form>
+
+            <br>
+
+            <div class="center">
+
+                <a
+                    href="#"
+                    onclick="
+                        showPage(
+                            'loginPage'
+                        )
+                    "
+                >
+                    Sudah punya akun? Login
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script>
+
+function showPage(pageId){
+
+    document
+    .querySelectorAll(".page")
+    .forEach(function(page){
+
+        page.style.display =
+            "none";
+
+    });
+
+    document
+    .getElementById(pageId)
+    .style.display =
+        "block";
+
+}
+
+</script>
+
+<script>
+
+function togglePassword(id){
+
+    const input =
+        document.getElementById(id);
+
+    if(
+        input.type ===
+        "password"
+    ){
+
+        input.type = "text";
+
+    }else{
+
+        input.type = "password";
+
+    }
+
+}
+
+</script>
+
+<script src="assets/js/auto-logout.js"></script>
+
+<script src="assets/js/crypto.js"></script>
+
+<script src="assets/js/vault-api.js"></script>
+
+<script src="assets/js/vault-ui.js"></script>
+
+<script src="assets/js/backup.js"></script>
+
+<script src="assets/js/password-checker.js"></script>
+
+<script src="assets/js/dashboard.js"></script>
+
+<script src="assets/js/add.js"></script>
+
+<script src="assets/js/edit.js"></script>
+
+<script src="assets/js/generator.js"></script>
+
+<script src="assets/js/login.js"></script>
+
+<script src="assets/js/auth.js"></script>
+
+<script>
+
+if(
+
+    sessionStorage.getItem(
+        "isLoggedIn"
+    )
+
+){
+
+    showPage(
+        "dashboardPage"
+    );
+
+    if(
+        typeof loadVault ===
+        "function"
+    ){
+
+        loadVault();
+
+    }
+
+}else{
+
+    showPage(
+        "loginPage"
+    );
+
+}
+
+</script>
+
+</body>
+</html>
