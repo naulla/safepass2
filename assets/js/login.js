@@ -217,7 +217,7 @@ document.getElementById("loginForm")
         // DERIVE AES KEY
         // =========================
 
-        const key =
+        const key = 
             await deriveKey(
 
                 password,

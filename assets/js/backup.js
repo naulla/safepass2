@@ -214,12 +214,16 @@ async function importEncryptedBackup(
 
                         body:JSON.stringify({
 
-                            encrypted_data:
-                                vault
-                                .encrypted_data,
+                            encrypted_data:{
 
-                            iv:
-                                vault.iv
+                                data:
+                                    vault
+                                    .encrypted_data,
+
+                                iv:
+                                    vault.iv
+
+                            }
 
                         })
 
@@ -240,11 +244,29 @@ async function importEncryptedBackup(
             }
 
             // =========================
-            // RESULT
+            // READ RESPONSE
+            // =========================
+
+            const textResponse =
+                await response.text();
+
+            console.log(
+                "IMPORT RESPONSE:",
+                textResponse
+            );
+
+            // =========================
+            // PARSE JSON
             // =========================
 
             const result =
-                await response.json();
+                JSON.parse(
+                    textResponse
+                );
+
+            // =========================
+            // RESULT
+            // =========================
 
             if(
 
@@ -269,7 +291,7 @@ async function importEncryptedBackup(
             "Backup berhasil diimport"
         );
 
-        loadVault();
+        await loadVault();
 
     }catch(error){
 

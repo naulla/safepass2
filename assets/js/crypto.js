@@ -10,6 +10,7 @@ const PBKDF2_ITERATIONS =
 // =========================
 
 let cachedKey = null;
+
 // =========================
 // CACHE AES KEY
 // =========================

@@ -994,10 +994,6 @@ textarea{
 
         <div class="auth-card">
 
-            <div class="logo login-logo">
-                🔐
-            </div>
-
             <h1 class="auth-title">
                 ReKey
             </h1>
@@ -1084,10 +1080,6 @@ textarea{
     <div class="auth-container">
 
         <div class="auth-card">
-
-            <div class="logo register-logo">
-                🛡️
-            </div>
 
             <h1 class="auth-title">
                 Create Account
