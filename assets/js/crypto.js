@@ -2,9 +2,6 @@ const PBKDF2_ITERATIONS =
     600000;
 
 let cachedKey = null;
-// =========================
-// CACHE AES KEY
-// =========================
 
 function setAESKey(key){
     cachedKey = key;
